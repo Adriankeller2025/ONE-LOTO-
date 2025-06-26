@@ -34,7 +34,7 @@
     label {
       display: block;
       margin-top: 1rem;
-      font-weight: 700;
+      font-weight: 600;
       text-align: left;
     }
     input, select {
@@ -69,7 +69,6 @@
       border-radius: 10px;
       font-weight: 700;
       display: none;
-      text-align: center;
     }
     #mensagem.sucesso {
       background-color: #4caf50;
@@ -86,12 +85,12 @@
     <h1>💜 KL LOTINHA - Inscrição Bolão Lotofácil 💜</h1>
     <form id="formulario">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" name="nome" required autocomplete="off" placeholder="Digite seu nome completo" />
+      <input type="text" id="nome" name="nome" required />
 
       <label for="tipoCota">Escolha a cota:</label>
       <select id="tipoCota" name="tipoCota" required>
         <option value="">Selecione...</option>
-        <option value="meia">Meia cota (R$22,00) — máximo 1</option>
+        <option value="Meia">Meia cota (R$22,00) — máximo 1</option>
         <option value="1">1 Cota inteira (R$44,00)</option>
         <option value="2">2 Cotas inteiras (R$88,00)</option>
         <option value="3">3 Cotas inteiras (R$132,00)</option>
@@ -103,10 +102,9 @@
   </div>
 
   <script>
-    const urlScript = 'https://script.google.com/macros/s/AKfycbyopEbC8rreIe0UCQhOqZIMURXC-Hw1nyj6WlcNUeG_GdyEehAorYhRxg-wMttB3tY/exec';
-
     const formulario = document.getElementById('formulario');
     const mensagem = document.getElementById('mensagem');
+    const urlScript = 'https://script.google.com/macros/s/AKfycbx9BGyOmJmR35jYosIthb-PvvN9ccRps3vG2efKt87h16C_Oczpkv2CSTr6Ymd5ETDr/exec';
 
     formulario.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -124,15 +122,13 @@
       try {
         const resposta = await fetch(urlScript, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ nome, tipoCota })
         });
 
         const texto = await resposta.text();
 
-        if (texto.toLowerCase().includes('sucesso')) {
+        if (texto.includes('sucesso')) {
           mensagem.textContent = texto;
           mensagem.className = 'sucesso';
           formulario.reset();
