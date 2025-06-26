@@ -85,7 +85,7 @@
     <h1>💜 KL LOTINHA - Inscrição Bolão Lotofácil 💜</h1>
     <form id="formulario">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" name="nome" required />
+      <input type="text" id="nome" name="nome" required autocomplete="off" />
 
       <label for="tipoCota">Escolha a cota:</label>
       <select id="tipoCota" name="tipoCota" required>
@@ -129,7 +129,7 @@
 
         const texto = await resposta.text();
 
-        if (texto.includes('sucesso')) {
+        if (texto.toLowerCase().includes('sucesso')) {
           mensagem.textContent = texto;
           mensagem.className = 'sucesso';
           formulario.reset();
@@ -148,4 +148,3 @@
   </script>
 </body>
 </html>
-Renomeia arquivo para index.html
