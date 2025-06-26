@@ -2,123 +2,53 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>📋 Inscrição Bolão KL Lotofácil</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
   <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
-    }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #4b0082, #800080);
       color: #fff;
-      margin: 0;
-      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      height: 100vh;
+      margin: 0;
       padding: 2rem;
     }
     .card {
       background: #2e003e;
       border-radius: 20px;
-      padding: 2rem 2.5rem;
-      max-width: 420px;
+      padding: 2rem;
+      max-width: 400px;
       width: 100%;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
       text-align: center;
       border: 2px solid #ffda77;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
     }
     h1 {
-      margin: 0;
+      margin-bottom: 1rem;
       color: #ffccff;
-      font-weight: 700;
-      font-size: 1.7rem;
     }
     label {
       display: block;
-      margin-top: 0.8rem;
+      margin-top: 1rem;
       font-weight: 600;
       text-align: left;
-      color: #ffd700;
-      font-size: 1.1rem;
     }
-    input[type="text"] {
+    input, select {
       width: 100%;
-      padding: 14px;
+      padding: 10px;
       margin-top: 0.4rem;
       border-radius: 10px;
       border: none;
       background: #3b1a57;
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
-    /* Cotação estilizada */
-    .cotacoes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin-top: 0.5rem;
-    }
-
-    .cota-opcao {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .cota-opcao input[type="radio"] {
-      display: none;
-    }
-
-    .box-cota {
-      border-radius: 15px;
-      padding: 18px 10px;
-      background: #3b1a57;
-      border: 2px solid transparent;
-      color: #ffda77;
-      font-weight: 700;
-      box-shadow: 0 0 12px rgba(255, 218, 119, 0.3);
-      text-align: center;
-      transition: all 0.3s ease;
-      user-select: none;
-      font-size: 1.1rem;
-    }
-
-    .box-cota .titulo {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: #ffd700;
-      user-select: none;
-    }
-
-    .box-cota .valor {
-      font-size: 1.6rem;
-      color: #fff;
-      user-select: none;
-    }
-
-    .cota-opcao:hover .box-cota {
-      box-shadow: 0 0 25px #ffd700;
-      border-color: #ffd700;
-      background: linear-gradient(135deg, #5e2b9f, #8133c9);
-      color: #fff;
-    }
-
-    .cota-opcao input[type="radio"]:checked + .box-cota {
-      border-color: #ffda77;
-      box-shadow: 0 0 30px #ffda77;
-      background: linear-gradient(135deg, #6b3db0, #a267e8);
-      color: #fff;
-    }
-
-    /* Botão enviar */
+    /* Botão com animação pulsante contínua */
     button {
       margin-top: 1.8rem;
       width: 100%;
@@ -130,24 +60,39 @@
       color: #000;
       cursor: pointer;
       font-size: 1.2rem;
-      transition: 0.3s ease;
       user-select: none;
+      position: relative;
+      overflow: hidden;
+      animation: pulse 2.5s infinite;
+      box-shadow: 0 0 10px #ffda77;
+      transition: transform 0.3s ease;
     }
     button:hover {
-      box-shadow: 0 0 15px #ffda77;
-      transform: scale(1.05);
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #ffd700, 0 0 40px #ff9a00;
     }
 
-    /* Mensagem */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 10px #ffda77;
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 25px #ffd700, 0 0 40px #ff9a00;
+        transform: scale(1.05);
+      }
+      100% {
+        box-shadow: 0 0 10px #ffda77;
+        transform: scale(1);
+      }
+    }
+
     #mensagem {
       margin-top: 1rem;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 1.1rem;
       display: none;
-      user-select: none;
-      word-break: break-word;
     }
     #mensagem.sucesso {
       background-color: #4caf50;
@@ -157,127 +102,28 @@
       background-color: #e53935;
       color: #fff;
     }
-
-    /* Informações do bolão */
-    .info-bolao {
-      margin-top: 25px;
-      padding: 15px;
-      background: #350055;
-      border-radius: 15px;
-      color: #ffd700;
-      font-weight: 600;
-      box-shadow: 0 0 15px #ffda77;
-      font-size: 1rem;
-      line-height: 1.5;
-      user-select: none;
-      text-align: left;
-    }
-
-    .info-bolao p {
-      margin: 6px 0;
-    }
-
-    /* RESPONSIVO */
-    @media (max-width: 480px) {
-      body {
-        padding: 1rem;
-      }
-      .card {
-        padding: 1.5rem 1.8rem;
-        max-width: 100%;
-      }
-      h1 {
-        font-size: 1.5rem;
-      }
-      label {
-        font-size: 1rem;
-      }
-      input[type="text"] {
-        font-size: 1rem;
-        padding: 12px;
-      }
-      .box-cota {
-        font-size: 1rem;
-        padding: 15px 8px;
-      }
-      .box-cota .titulo {
-        font-size: 1rem;
-        margin-bottom: 6px;
-      }
-      .box-cota .valor {
-        font-size: 1.3rem;
-      }
-      button {
-        font-size: 1.1rem;
-        padding: 14px;
-      }
-      .info-bolao {
-        font-size: 0.9rem;
-        padding: 12px;
-      }
-    }
   </style>
 </head>
 <body>
-  <main class="card" role="main" aria-label="Formulário de inscrição para bolão KL Lotofácil">
-    <h1>💜 KL LOTINHA 20 DZ - 💜</h1>
-
-    <form id="formulario" aria-describedby="info-bolao" novalidate>
+  <div class="card">
+    <h1>💜 KL LOTINHA 20DZ 💜</h1>
+    <form id="formulario">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" autocomplete="name" required />
+      <input type="text" id="nome" name="nome" required />
 
-      <label>Escolha sua cota:</label>
-      <div class="cotacoes">
-        <label class="cota-opcao" for="meia">
-          <input type="radio" id="meia" name="tipoCota" value="meia" required />
-          <div class="box-cota meia">
-            <div class="titulo">💰 Meia Cota</div>
-            <div class="valor">R$22,00</div>
-          </div>
-        </label>
+      <label for="tipoCota">Escolha a cota:</label>
+      <select id="tipoCota" name="tipoCota" required>
+        <option value="">Selecione...</option>
+        <option value="meia">Meia cota (R$22,00) — máximo 1</option>
+        <option value="1">1 Cota inteira (R$44,00)</option>
+        <option value="2">2 Cotas inteiras (R$88,00)</option>
+        <option value="3">3 Cotas inteiras (R$132,00)</option>
+      </select>
 
-        <label class="cota-opcao" for="1cota">
-          <input type="radio" id="1cota" name="tipoCota" value="1" />
-          <div class="box-cota inteira">
-            <div class="titulo">💰 1 Cota Inteira</div>
-            <div class="valor">R$44,00</div>
-          </div>
-        </label>
-
-        <label class="cota-opcao" for="2cotas">
-          <input type="radio" id="2cotas" name="tipoCota" value="2" />
-          <div class="box-cota inteira">
-            <div class="titulo">💰 2 Cotas Inteiras</div>
-            <div class="valor">R$88,00</div>
-          </div>
-        </label>
-
-        <label class="cota-opcao" for="3cotas">
-          <input type="radio" id="3cotas" name="tipoCota" value="3" />
-          <div class="box-cota inteira">
-            <div class="titulo">💰 3 Cotas Inteiras</div>
-            <div class="valor">R$132,00</div>
-          </div>
-        </label>
-      </div>
-
-      <button type="submit" aria-label="Confirmar inscrição">✅ Confirmar Participação</button>
+      <button type="submit">✅ Confirmar Participação</button>
     </form>
-
-    <section class="info-bolao" id="info-bolao" aria-live="polite" aria-atomic="true" role="region">
-      <p>💜 <strong>LOTINHA 20 DZ</strong> 💜</p>
-      <p>💰 Cota R$44,00</p>
-      <p>💰 Meia cota R$22,00</p>
-      <p>🥳 Prêmio por cota: <strong>R$1.508,40</strong></p>
-      <p>☘️ Fechamento 6 premiadas 100%</p>
-      <p>🎇 Estimativa total: <strong>R$50.000,00</strong></p>
-      <p>⚠️ 👉🏻 A cada 1 cota comprada, você ganha <strong>30 bilhetes</strong> para concorrer ao Ex30 elétrica ou <strong>R$240.000,00</strong> no pix</p>
-      <p>⌚ Pagamento até as <strong>17:00</strong></p>
-      <p>🏦 PIX CAIXA: <strong>11779518943</strong></p>
-    </section>
-
-    <div id="mensagem" role="alert" aria-live="assertive"></div>
-  </main>
+    <div id="mensagem"></div>
+  </div>
 
   <script>
     const urlAppsScript = 'https://script.google.com/macros/s/AKfycbykzEXOIfKlEW_rDMQBOUJ4eLdCuEN2x4Fa9X7dBZ6mkAoiqAotsC8iUrvoJ7s82aSP/exec';
@@ -289,7 +135,7 @@
       e.preventDefault();
 
       const nome = document.getElementById('nome').value.trim();
-      const tipoCota = document.querySelector('input[name="tipoCota"]:checked')?.value;
+      const tipoCota = document.getElementById('tipoCota').value;
 
       if (!nome || !tipoCota) {
         mensagem.textContent = '❌ Por favor, preencha todos os campos.';
@@ -298,29 +144,18 @@
         return;
       }
 
-      // Bloqueio de inscrições após as 17:00 (horário de São Paulo)
-      const agora = new Date();
-      const horarioSP = new Date(agora.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }));
-      const limite = new Date(horarioSP);
-      limite.setHours(17, 0, 0, 0); // 17:00:00
-
-      if (horarioSP >= limite) {
-        mensagem.textContent = '⏰ As inscrições encerram às 17:00. Por favor, tente novamente amanhã.';
-        mensagem.className = 'erro';
-        mensagem.style.display = 'block';
-        return;
-      }
-
       try {
         const resposta = await fetch(urlAppsScript, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           body: new URLSearchParams({ nome, tipoCota })
         });
 
         const texto = await resposta.text();
 
-        if (texto.toLowerCase().includes('sucesso')) {
+        if (texto.includes('sucesso')) {
           mensagem.textContent = texto;
           mensagem.className = 'sucesso';
           formulario.reset();
