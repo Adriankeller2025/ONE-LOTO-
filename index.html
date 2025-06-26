@@ -90,7 +90,7 @@
       <label for="tipoCota">Escolha a cota:</label>
       <select id="tipoCota" name="tipoCota" required>
         <option value="">Selecione...</option>
-        <option value="Meia">Meia cota (R$22,00) — máximo 1</option>
+        <option value="meia">Meia cota (R$22,00) — máximo 1</option>
         <option value="1">1 Cota inteira (R$44,00)</option>
         <option value="2">2 Cotas inteiras (R$88,00)</option>
         <option value="3">3 Cotas inteiras (R$132,00)</option>
@@ -102,9 +102,10 @@
   </div>
 
   <script>
+    const urlAppsScript = 'https://script.google.com/macros/s/AKfycbykzEXOIfKlEW_rDMQBOUJ4eLdCuEN2x4Fa9X7dBZ6mkAoiqAotsC8iUrvoJ7s82aSP/exec'; // sua URL do Apps Script aqui
+
     const formulario = document.getElementById('formulario');
     const mensagem = document.getElementById('mensagem');
-    const urlScript = 'https://script.google.com/macros/s/AKfycbx9BGyOmJmR35jYosIthb-PvvN9ccRps3vG2efKt87h16C_Oczpkv2CSTr6Ymd5ETDr/exec';
 
     formulario.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -120,9 +121,11 @@
       }
 
       try {
-        const resposta = await fetch(urlScript, {
+        const resposta = await fetch(urlAppsScript, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           body: new URLSearchParams({ nome, tipoCota })
         });
 
