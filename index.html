@@ -13,44 +13,34 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
       padding: 2rem;
     }
     .card {
       background: #2e003e;
       border-radius: 20px;
-      padding: 2.5rem 2rem 3rem 2rem;
+      padding: 2rem;
       max-width: 420px;
       width: 100%;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
       text-align: center;
       border: 2px solid #ffda77;
-      position: relative;
+      user-select: none;
     }
     h1 {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       color: #ffccff;
       font-weight: 700;
-      font-size: 1.8rem;
-    }
-    .notice {
-      background-color: #ffda77;
-      color: #333;
-      font-weight: 700;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 10px #ffda77;
     }
     label {
       display: block;
       margin-top: 1rem;
       font-weight: 600;
       text-align: left;
-      font-size: 1.1rem;
+      color: #ffd700;
     }
-    input, select {
+    input[type="text"] {
       width: 100%;
       padding: 12px;
       margin-top: 0.4rem;
@@ -59,14 +49,69 @@
       background: #3b1a57;
       color: #fff;
       font-size: 1rem;
-      outline: none;
-      transition: box-shadow 0.3s ease;
     }
-    input:focus, select:focus {
-      box-shadow: 0 0 10px #ffda77;
+
+    /* Cotação estilizada */
+    .cotacoes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 0.5rem;
     }
+
+    .cota-opcao {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .cota-opcao input[type="radio"] {
+      display: none;
+    }
+
+    .box-cota {
+      border-radius: 15px;
+      padding: 15px 10px;
+      background: #3b1a57;
+      border: 2px solid transparent;
+      color: #ffda77;
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(255, 218, 119, 0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      user-select: none;
+      font-size: 1rem;
+    }
+
+    .box-cota .titulo {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #ffd700;
+      user-select: none;
+    }
+
+    .box-cota .valor {
+      font-size: 1.4rem;
+      color: #fff;
+      user-select: none;
+    }
+
+    .cota-opcao:hover .box-cota {
+      box-shadow: 0 0 25px #ffd700;
+      border-color: #ffd700;
+      background: linear-gradient(135deg, #5e2b9f, #8133c9);
+      color: #fff;
+    }
+
+    .cota-opcao input[type="radio"]:checked + .box-cota {
+      border-color: #ffda77;
+      box-shadow: 0 0 30px #ffda77;
+      background: linear-gradient(135deg, #6b3db0, #a267e8);
+      color: #fff;
+    }
+
+    /* Botão enviar */
     button {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       width: 100%;
       padding: 14px;
       background: linear-gradient(to right, #ffd700, #ff9a00);
@@ -75,61 +120,113 @@
       font-weight: 700;
       color: #000;
       cursor: pointer;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       transition: 0.3s ease;
-      box-shadow: 0 0 15px #ffda77;
+      user-select: none;
     }
     button:hover {
+      box-shadow: 0 0 15px #ffda77;
       transform: scale(1.05);
-      box-shadow: 0 0 25px #ffda77;
     }
+
+    /* Mensagem */
     #mensagem {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       padding: 12px;
       border-radius: 10px;
       font-weight: 700;
       font-size: 1rem;
       display: none;
-      text-align: center;
+      user-select: none;
     }
     #mensagem.sucesso {
       background-color: #4caf50;
       color: #fff;
-      box-shadow: 0 0 15px #4caf50;
     }
     #mensagem.erro {
       background-color: #e53935;
       color: #fff;
-      box-shadow: 0 0 15px #e53935;
+    }
+
+    /* Informações do bolão */
+    .info-bolao {
+      margin-top: 25px;
+      padding: 15px;
+      background: #350055;
+      border-radius: 15px;
+      color: #ffd700;
+      font-weight: 600;
+      box-shadow: 0 0 15px #ffda77;
+      font-size: 1rem;
+      line-height: 1.5;
+      user-select: none;
+      text-align: left;
+    }
+
+    .info-bolao p {
+      margin: 8px 0;
     }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="card" role="main" aria-label="Formulário de inscrição para bolão KL Lotofácil">
     <h1>💜 KL LOTINHA - Inscrição Bolão Lotofácil 💜</h1>
 
-    <div class="notice">
-      🕔 <strong>Atenção:</strong> Inscrições encerram às <strong>17h</strong> em ponto.  
-      Faça sua inscrição antes desse horário para garantir sua participação.
-    </div>
-
-    <form id="formulario">
+    <form id="formulario" aria-describedby="info-bolao">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" name="nome" placeholder="Ex: Maria da Silva" required />
+      <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" autocomplete="name" required />
 
-      <label for="tipoCota">Escolha a cota:</label>
-      <select id="tipoCota" name="tipoCota" required>
-        <option value="" disabled selected>Selecione...</option>
-        <option value="meia">Meia cota (R$22,00) — máximo 1</option>
-        <option value="1">1 Cota inteira (R$44,00)</option>
-        <option value="2">2 Cotas inteiras (R$88,00)</option>
-        <option value="3">3 Cotas inteiras (R$132,00)</option>
-      </select>
+      <label>Escolha sua cota:</label>
+      <div class="cotacoes">
+        <label class="cota-opcao" for="meia">
+          <input type="radio" id="meia" name="tipoCota" value="meia" required />
+          <div class="box-cota meia">
+            <div class="titulo">💰 Meia Cota</div>
+            <div class="valor">R$22,00</div>
+          </div>
+        </label>
 
-      <button type="submit">✅ Confirmar inscrição</button>
+        <label class="cota-opcao" for="1cota">
+          <input type="radio" id="1cota" name="tipoCota" value="1" />
+          <div class="box-cota inteira">
+            <div class="titulo">💰 1 Cota Inteira</div>
+            <div class="valor">R$44,00</div>
+          </div>
+        </label>
+
+        <label class="cota-opcao" for="2cotas">
+          <input type="radio" id="2cotas" name="tipoCota" value="2" />
+          <div class="box-cota inteira">
+            <div class="titulo">💰 2 Cotas Inteiras</div>
+            <div class="valor">R$88,00</div>
+          </div>
+        </label>
+
+        <label class="cota-opcao" for="3cotas">
+          <input type="radio" id="3cotas" name="tipoCota" value="3" />
+          <div class="box-cota inteira">
+            <div class="titulo">💰 3 Cotas Inteiras</div>
+            <div class="valor">R$132,00</div>
+          </div>
+        </label>
+      </div>
+
+      <button type="submit" aria-label="Confirmar inscrição">✅ Confirmar inscrição</button>
     </form>
 
-    <div id="mensagem"></div>
+    <div class="info-bolao" id="info-bolao" aria-live="polite" aria-atomic="true" role="region">
+      <p>💜 <strong>LOTINHA 20 DZ</strong> 💜</p>
+      <p>💰 Cota R$44,00</p>
+      <p>💰 Meia cota R$22,00</p>
+      <p>🥳 Prêmio por cota: <strong>R$1.508,40</strong></p>
+      <p>☘️ Fechamento 6 premiadas 100%</p>
+      <p>🎇 Estimativa total: <strong>R$50.000,00</strong></p>
+      <p>⚠️ 👉🏻 A cada 1 cota comprada, você ganha <strong>30 bilhetes</strong> para concorrer ao Ex30 elétrica ou <strong>R$240.000,00</strong> no pix</p>
+      <p>⌚ Pagamento até as <strong>17:00</strong></p>
+      <p>🏦 PIX CAIXA: <strong>11779518943</strong></p>
+    </div>
+
+    <div id="mensagem" role="alert"></div>
   </div>
 
   <script>
@@ -141,12 +238,8 @@
     formulario.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      mensagem.style.display = 'none';
-      mensagem.textContent = '';
-      mensagem.className = '';
-
       const nome = document.getElementById('nome').value.trim();
-      const tipoCota = document.getElementById('tipoCota').value;
+      const tipoCota = document.querySelector('input[name="tipoCota"]:checked')?.value;
 
       if (!nome || !tipoCota) {
         mensagem.textContent = '❌ Por favor, preencha todos os campos.';
@@ -155,10 +248,14 @@
         return;
       }
 
-      // Verifica se já passou das 17h
+      // Bloqueio de inscrições após as 17:00 (horário de São Paulo)
       const agora = new Date();
-      if (agora.getHours() >= 17) {
-        mensagem.textContent = '❌ As inscrições encerraram às 17h. Aguarde o próximo bolão!';
+      const horarioSP = new Date(agora.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }));
+      const limite = new Date(horarioSP);
+      limite.setHours(17, 0, 0, 0); // 17:00:00
+
+      if (horarioSP >= limite) {
+        mensagem.textContent = '⏰ As inscrições encerram às 17:00. Por favor, tente novamente amanhã.';
         mensagem.className = 'erro';
         mensagem.style.display = 'block';
         return;
@@ -167,14 +264,16 @@
       try {
         const resposta = await fetch(urlAppsScript, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           body: new URLSearchParams({ nome, tipoCota })
         });
 
         const texto = await resposta.text();
 
         if (texto.toLowerCase().includes('sucesso')) {
-          mensagem.textContent = '✅ Inscrição confirmada! Boa sorte 🍀';
+          mensagem.textContent = texto;
           mensagem.className = 'sucesso';
           formulario.reset();
         } else {
@@ -182,6 +281,7 @@
           mensagem.className = 'erro';
         }
         mensagem.style.display = 'block';
+
       } catch (error) {
         mensagem.textContent = '❌ Falha na conexão. Verifique sua internet.';
         mensagem.className = 'erro';
