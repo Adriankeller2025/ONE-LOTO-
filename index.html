@@ -13,83 +13,113 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
       padding: 2rem;
     }
     .card {
       background: #2e003e;
       border-radius: 20px;
-      padding: 2rem;
-      max-width: 400px;
+      padding: 2.5rem 2rem 3rem 2rem;
+      max-width: 420px;
       width: 100%;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
       text-align: center;
       border: 2px solid #ffda77;
+      position: relative;
     }
     h1 {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       color: #ffccff;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .notice {
+      background-color: #ffda77;
+      color: #333;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 10px #ffda77;
     }
     label {
       display: block;
       margin-top: 1rem;
       font-weight: 600;
       text-align: left;
+      font-size: 1.1rem;
     }
     input, select {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 0.4rem;
       border-radius: 10px;
       border: none;
       background: #3b1a57;
       color: #fff;
       font-size: 1rem;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+    input:focus, select:focus {
+      box-shadow: 0 0 10px #ffda77;
     }
     button {
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background: linear-gradient(to right, #ffd700, #ff9a00);
       border: none;
       border-radius: 10px;
       font-weight: 700;
       color: #000;
       cursor: pointer;
+      font-size: 1.2rem;
       transition: 0.3s ease;
+      box-shadow: 0 0 15px #ffda77;
     }
     button:hover {
-      box-shadow: 0 0 15px #ffda77;
-      transform: scale(1.03);
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #ffda77;
     }
     #mensagem {
-      margin-top: 1rem;
-      padding: 10px;
+      margin-top: 1.5rem;
+      padding: 12px;
       border-radius: 10px;
       font-weight: 700;
+      font-size: 1rem;
       display: none;
+      text-align: center;
     }
     #mensagem.sucesso {
       background-color: #4caf50;
       color: #fff;
+      box-shadow: 0 0 15px #4caf50;
     }
     #mensagem.erro {
       background-color: #e53935;
       color: #fff;
+      box-shadow: 0 0 15px #e53935;
     }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>💜 KL LOTINHA - Inscrição Bolão Lotofácil 💜</h1>
+
+    <div class="notice">
+      🕔 <strong>Atenção:</strong> Inscrições encerram às <strong>17h</strong> em ponto.  
+      Faça sua inscrição antes desse horário para garantir sua participação.
+    </div>
+
     <form id="formulario">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" name="nome" required />
+      <input type="text" id="nome" name="nome" placeholder="Ex: Maria da Silva" required />
 
       <label for="tipoCota">Escolha a cota:</label>
       <select id="tipoCota" name="tipoCota" required>
-        <option value="">Selecione...</option>
+        <option value="" disabled selected>Selecione...</option>
         <option value="meia">Meia cota (R$22,00) — máximo 1</option>
         <option value="1">1 Cota inteira (R$44,00)</option>
         <option value="2">2 Cotas inteiras (R$88,00)</option>
@@ -98,17 +128,22 @@
 
       <button type="submit">✅ Confirmar inscrição</button>
     </form>
+
     <div id="mensagem"></div>
   </div>
 
   <script>
-    const urlAppsScript = 'https://script.google.com/macros/s/AKfycbykzEXOIfKlEW_rDMQBOUJ4eLdCuEN2x4Fa9X7dBZ6mkAoiqAotsC8iUrvoJ7s82aSP/exec'; // sua URL do Apps Script aqui
+    const urlAppsScript = 'https://script.google.com/macros/s/AKfycbykzEXOIfKlEW_rDMQBOUJ4eLdCuEN2x4Fa9X7dBZ6mkAoiqAotsC8iUrvoJ7s82aSP/exec';
 
     const formulario = document.getElementById('formulario');
     const mensagem = document.getElementById('mensagem');
 
     formulario.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      mensagem.style.display = 'none';
+      mensagem.textContent = '';
+      mensagem.className = '';
 
       const nome = document.getElementById('nome').value.trim();
       const tipoCota = document.getElementById('tipoCota').value;
@@ -120,19 +155,26 @@
         return;
       }
 
+      // Verifica se já passou das 17h
+      const agora = new Date();
+      if (agora.getHours() >= 17) {
+        mensagem.textContent = '❌ As inscrições encerraram às 17h. Aguarde o próximo bolão!';
+        mensagem.className = 'erro';
+        mensagem.style.display = 'block';
+        return;
+      }
+
       try {
         const resposta = await fetch(urlAppsScript, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ nome, tipoCota })
         });
 
         const texto = await resposta.text();
 
-        if (texto.includes('sucesso')) {
-          mensagem.textContent = texto;
+        if (texto.toLowerCase().includes('sucesso')) {
+          mensagem.textContent = '✅ Inscrição confirmada! Boa sorte 🍀';
           mensagem.className = 'sucesso';
           formulario.reset();
         } else {
@@ -140,7 +182,6 @@
           mensagem.className = 'erro';
         }
         mensagem.style.display = 'block';
-
       } catch (error) {
         mensagem.textContent = '❌ Falha na conexão. Verifique sua internet.';
         mensagem.className = 'erro';
