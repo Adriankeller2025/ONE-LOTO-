@@ -1,114 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title> One Loto</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'Poppins',sans-serif;
-  background: linear-gradient(135deg,#4b0082,#800080);
-  display:flex;justify-content:center;align-items:flex-start;
-  min-height:100vh;padding:2rem;color:#fff;
-}
-.card{
-  background:#2e003e;
-  border-radius:20px;
-  padding:2rem;
-  max-width:550px;
-  width:100%;
-  box-shadow:0 0 20px rgba(255,255,255,0.1);
-  text-align:center;
-  border:2px solid #ffda77;
-  display:flex;
-  flex-direction:column;
-  gap:1.5rem;
-}
-h1{
-  font-size:2rem;
-  color:#ffccff;
-  font-weight:700;
-  margin-bottom:0.5rem;
-}
-label{font-weight:600;text-align:left;color:#ffd700;font-size:1.1rem;margin-bottom:0.3rem;display:block;}
-input[type="text"]{
-  width:100%;padding:12px;border-radius:10px;border:none;background:#3b1a57;color:#fff;font-size:1.1rem;margin-bottom:1rem;
-}
-.cotacoes{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-  margin-top:0.5rem;
-}
-.cota-opcao{cursor:pointer;user-select:none;display:block;}
-.cota-opcao input[type="radio"]{display:none;}
-.box-cota{
-  background:#3b1a57;
-  border-radius:15px;
-  padding:15px 0;
-  font-weight:700;
-  color:#ffda77;
-  font-size:1.2rem;
-  border:2px solid transparent;
-  transition:all 0.3s ease;
-  box-shadow:0 0 10px rgba(255,218,119,0.3);
-  text-align:center;
-}
-.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 20px #ffd700;color:#fff;}
-input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 25px #ffda77;}
-.box-cota.disabled{opacity:0.4;cursor:not-allowed;}
-button{
-  margin-top:1rem;width:100%;padding:16px;
-  background:linear-gradient(to right,#ffd700,#ff9a00);
-  border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
-  cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
-}
-button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
-@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}50%{transform:scale(1.05);box-shadow:0 0 25px #ffd700,0 0 40px #ff9a00;}100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}}
-#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
-#mensagem.sucesso{background-color:#4caf50;color:#fff;}
-#mensagem.erro{background-color:#e53935;color:#fff;}
-.info-bolao{
-  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
-}
-.info-bolao p{margin:5px 0;}
-@media(max-width:480px){
-  .cotacoes{grid-template-columns:repeat(5,1fr);gap:8px;}
-  input[type="text"]{font-size:1rem;padding:10px;}
-  .box-cota{font-size:1rem;padding:12px 0;}
-  button{font-size:1.1rem;padding:14px;}
-}
-</style>
-</head>
-<body>
-<main class="card">
-<h1>💜 ONE LOTO 💜</h1>
-
-<form id="formulario" novalidate>
-<label for="nome">Seu nome:</label>
-<input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required />
-
-<label>Escolha sua dezena:</label>
-<div class="cotacoes" id="cotacoes"></div>
-
-<button type="submit">✅ Reservar Dezena</button>
-</form>
-
-<section class="info-bolao">
-<p>💜 <strong>ONE LOTO</strong> 💜</p>
-<p>💰 Valor por dezena: R$15,00</p>
-<p>🥳 Prêmio fixo: R$263,00</p>
-<p>💸 Todo dia tem 1 Ganhador</p>
-<p>⚠️ Cada dezena só pode ser comprada uma vez!</p>
-<p>⌚ Pagamento até as <strong>17:00</strong></p>
-</section>
-
-<div id="mensagem"></div>
-</main>
-
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbz9qbddwxyLK6woNkyYjsiMd68S3woUsyj3AvjnJ4-5191d1nqIxV7FffYU5Dm_CmVO/exec";
+
 // Array de dezenas
 const dezenasDisponiveis = Array.from({length:25},(_,i)=>({num:i+1, comprado:false}));
 
@@ -132,6 +24,17 @@ function atualizarUI(){
   });
 }
 
+// Carregar dezenas já reservadas da planilha
+fetch(API_URL)
+  .then(res => res.json())
+  .then(reservadas => {
+    reservadas.forEach(num => {
+      const dez = dezenasDisponiveis.find(d=>d.num==num);
+      if (dez) dez.comprado = true;
+    });
+    atualizarUI();
+  });
+
 const formulario = document.getElementById('formulario');
 const mensagem = document.getElementById('mensagem');
 
@@ -147,21 +50,26 @@ formulario.addEventListener('submit', e=>{
     return;
   }
 
-  const dez = dezenasDisponiveis.find(d=>d.num===dezena);
-  if(dez.comprado){
-    mensagem.textContent='❌ Essa dezena já foi comprada!';
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ nome, dezena }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(ret => {
+    mensagem.textContent = ret.msg;
+    mensagem.className = ret.status === "ok" ? 'sucesso' : 'erro';
+    mensagem.style.display = 'block';
+    if (ret.status === "ok") {
+      dezenasDisponiveis.find(d=>d.num===dezena).comprado = true;
+      atualizarUI();
+      formulario.reset();
+    }
+  })
+  .catch(() => {
+    mensagem.textContent='❌ Erro ao conectar com o servidor.';
     mensagem.className='erro';
     mensagem.style.display='block';
-    return;
-  }
-
-  dez.comprado=true;
-  atualizarUI();
-  mensagem.textContent=`✅ ${nome}, você reservou a dezena ${dezena}! Seu Prêmio será R$263,00.`;
-  mensagem.className='sucesso';
-  mensagem.style.display='block';
-  formulario.reset();
+  });
 });
 </script>
-</body>
-</html>
