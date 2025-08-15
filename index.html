@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>💜 ONE LOTO 💜</title>
+<title>One Loto</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -30,7 +30,6 @@ h1{
   font-size:2rem;
   color:#ffccff;
   font-weight:700;
-  margin-bottom:0.5rem;
 }
 label{font-weight:600;text-align:left;color:#ffd700;font-size:1.1rem;margin-bottom:0.3rem;display:block;}
 input[type="text"]{
@@ -40,7 +39,6 @@ input[type="text"]{
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:12px;
-  margin-top:0.5rem;
 }
 .cota-opcao{cursor:pointer;user-select:none;display:block;}
 .cota-opcao input[type="radio"]{display:none;}
@@ -54,9 +52,8 @@ input[type="text"]{
   border:2px solid transparent;
   transition:all 0.3s ease;
   box-shadow:0 0 10px rgba(255,218,119,0.3);
-  text-align:center;
 }
-.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 20px #ffd700;color:#fff;}
+.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;color:#fff;}
 input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 25px #ffda77;}
 .box-cota.disabled{opacity:0.4;cursor:not-allowed;}
 button{
@@ -65,20 +62,13 @@ button{
   border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
   cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
 }
-button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
-@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}50%{transform:scale(1.05);box-shadow:0 0 25px #ffd700,0 0 40px #ff9a00;}100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}}
-#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
+button:hover{transform:scale(1.05);}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;}
 #mensagem.sucesso{background-color:#4caf50;color:#fff;}
 #mensagem.erro{background-color:#e53935;color:#fff;}
 .info-bolao{
   margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
-}
-.info-bolao p{margin:5px 0;}
-@media(max-width:480px){
-  .cotacoes{grid-template-columns:repeat(5,1fr);gap:8px;}
-  input[type="text"]{font-size:1rem;padding:10px;}
-  .box-cota{font-size:1rem;padding:12px 0;}
-  button{font-size:1.1rem;padding:14px;}
 }
 </style>
 </head>
@@ -109,10 +99,11 @@ button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;
 </main>
 
 <script>
-// Array de dezenas
+const scriptURL = "https://script.google.com/macros/s/AKfycbz9qbddwxyLK6woNkyYjsiMd68S3woUsyj3AvjnJ4-5191d1nqIxV7FffYU5Dm_CmVO/exec";
+
+// Gera dezenas
 const dezenasDisponiveis = Array.from({length:25},(_,i)=>({num:i+1, comprado:false}));
 const container = document.getElementById('cotacoes');
-
 dezenasDisponiveis.forEach(d=>{
   const label = document.createElement('label');
   label.className='cota-opcao';
@@ -121,8 +112,7 @@ dezenasDisponiveis.forEach(d=>{
 });
 
 function atualizarUI(){
-  const boxes = document.querySelectorAll('.box-cota');
-  boxes.forEach(box=>{
+  document.querySelectorAll('.box-cota').forEach(box=>{
     const val = parseInt(box.textContent);
     const dez = dezenasDisponiveis.find(d=>d.num===val);
     if(dez.comprado){
@@ -147,30 +137,23 @@ formulario.addEventListener('submit', e=>{
     return;
   }
 
-  const dez = dezenasDisponiveis.find(d=>d.num===dezena);
-  if(dez.comprado){
-    mensagem.textContent='❌ Essa dezena já foi comprada!';
+  fetch(scriptURL, {
+    method: 'POST',
+    body: new FormData(formulario)
+  })
+  .then(response => {
+    dezenasDisponiveis.find(d=>d.num===dezena).comprado=true;
+    atualizarUI();
+    mensagem.textContent=`✅ ${nome}, você reservou a dezena ${dezena}!`;
+    mensagem.className='sucesso';
+    mensagem.style.display='block';
+    formulario.reset();
+  })
+  .catch(error => {
+    mensagem.textContent='❌ Erro ao enviar. Tente novamente.';
     mensagem.className='erro';
     mensagem.style.display='block';
-    return;
-  }
-
-  // Marcar como comprada
-  dez.comprado=true;
-  atualizarUI();
-
-  // Enviar para a planilha
-  fetch("https://script.google.com/macros/s/AKfycbz9qbddwxyLK6woNkyYjsiMd68S3woUsyj3AvjnJ4-5191d1nqIxV7FffYU5Dm_CmVO/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-    body: `nome=${encodeURIComponent(nome)}&dezena=${dezena}&valor=15`
   });
-
-  mensagem.textContent=`✅ ${nome}, você reservou a dezena ${dezena}! Seu prêmio será R$263,00.`;
-  mensagem.className='sucesso';
-  mensagem.style.display='block';
-  formulario.reset();
 });
 </script>
 </body>
