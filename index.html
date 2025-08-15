@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>ONE LOTO</title>
+<title>One Loto</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -30,6 +30,7 @@ h1{
   font-size:2rem;
   color:#ffccff;
   font-weight:700;
+  margin-bottom:0.5rem;
 }
 label{font-weight:600;text-align:left;color:#ffd700;font-size:1.1rem;margin-bottom:0.3rem;display:block;}
 input[type="text"]{
@@ -39,6 +40,7 @@ input[type="text"]{
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:12px;
+  margin-top:0.5rem;
 }
 .cota-opcao{cursor:pointer;user-select:none;display:block;}
 .cota-opcao input[type="radio"]{display:none;}
@@ -51,25 +53,33 @@ input[type="text"]{
   font-size:1.2rem;
   border:2px solid transparent;
   transition:all 0.3s ease;
+  box-shadow:0 0 10px rgba(255,218,119,0.3);
   text-align:center;
 }
-.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;color:#fff;}
-input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;}
+.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 20px #ffd700;color:#fff;}
+input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 25px #ffda77;}
 .box-cota.disabled{opacity:0.4;cursor:not-allowed;}
 button{
   margin-top:1rem;width:100%;padding:16px;
   background:linear-gradient(to right,#ffd700,#ff9a00);
   border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
-  cursor:pointer;transition:transform 0.3s ease;
+  cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
 }
-button:hover{transform:scale(1.05);}
-#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;}
+button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
+@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}50%{transform:scale(1.05);box-shadow:0 0 25px #ffd700,0 0 40px #ff9a00;}100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}}
+#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
 #mensagem.sucesso{background-color:#4caf50;color:#fff;}
 #mensagem.erro{background-color:#e53935;color:#fff;}
 .info-bolao{
-  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;font-size:1rem;line-height:1.5;text-align:left;
+  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
 }
 .info-bolao p{margin:5px 0;}
+@media(max-width:480px){
+  .cotacoes{grid-template-columns:repeat(5,1fr);gap:8px;}
+  input[type="text"]{font-size:1rem;padding:10px;}
+  .box-cota{font-size:1rem;padding:12px 0;}
+  button{font-size:1.1rem;padding:14px;}
+}
 </style>
 </head>
 <body>
@@ -99,45 +109,42 @@ button:hover{transform:scale(1.05);}
 </main>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzOIzF_ytcfLNfoDYLJuhDlWBRGaxz6zUAbGkPxPH7t37GUf2llUKR5W1_ml5156Jvh/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby2akkD-BSWXYtquU9cf9xFGhJV7QNjC6e9-139aLX6VVOAHPtlqORRp7A8rvgqS9c_/exec";
 
-// Cria as dezenas
-const dezenasDisponiveis = Array.from({length:25},(_,i)=>i+1);
+// Array de dezenas
+const dezenasDisponiveis = Array.from({length:25},(_,i)=>({num:i+1, comprado:false}));
 const container = document.getElementById('cotacoes');
 
-function renderDezenas(reservadas=[]) {
-  container.innerHTML = '';
-  dezenasDisponiveis.forEach(num=>{
+function carregarReservas() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      dezenasDisponiveis.forEach(d => {
+        if (data.includes(String(d.num))) {
+          d.comprado = true;
+        }
+      });
+      atualizarUI();
+    });
+}
+
+function atualizarUI(){
+  container.innerHTML = "";
+  dezenasDisponiveis.forEach(d=>{
     const label = document.createElement('label');
     label.className='cota-opcao';
-    const isReservada = reservadas.includes(String(num));
-    label.innerHTML=`<input type="radio" name="dezena" value="${num}" ${isReservada?'disabled':''}>
-                     <div class="box-cota ${isReservada?'disabled':''}">${num}</div>`;
+    const disabledClass = d.comprado ? 'disabled' : '';
+    label.innerHTML=`<input type="radio" name="dezena" value="${d.num}" ${d.comprado?'disabled':''}>
+                     <div class="box-cota ${disabledClass}">${d.num}</div>`;
     container.appendChild(label);
   });
 }
 
-// Busca dezenas reservadas no Google Sheets
-async function carregarReservadas(){
-  try {
-    const res = await fetch(API_URL);
-    const reservadas = await res.json();
-    renderDezenas(reservadas);
-  } catch(err){
-    console.error("Erro ao carregar reservas", err);
-    renderDezenas();
-  }
-}
-
-carregarReservadas();
-
-const formulario = document.getElementById('formulario');
-const mensagem = document.getElementById('mensagem');
-
-formulario.addEventListener('submit', async e=>{
+document.getElementById('formulario').addEventListener('submit', e=>{
   e.preventDefault();
   const nome = document.getElementById('nome').value.trim();
   const dezena = document.querySelector('input[name="dezena"]:checked')?.value;
+  const mensagem = document.getElementById('mensagem');
 
   if(!nome || !dezena){
     mensagem.textContent='❌ Preencha seu nome e escolha uma dezena.';
@@ -146,26 +153,30 @@ formulario.addEventListener('submit', async e=>{
     return;
   }
 
-  try {
-    const res = await fetch(API_URL, {
-      method:'POST',
-      body: JSON.stringify({nome, dezena}),
-      headers:{'Content-Type':'application/json'}
-    });
-    const data = await res.json();
-    mensagem.textContent=data.msg;
-    mensagem.className=data.status==='ok'?'sucesso':'erro';
-    mensagem.style.display='block';
-    if(data.status==='ok'){
-      formulario.reset();
-      carregarReservadas();
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ nome, dezena }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    mensagem.textContent = data.msg;
+    mensagem.className = data.status === "ok" ? "sucesso" : "erro";
+    mensagem.style.display = 'block';
+    if (data.status === "ok") {
+      dezenasDisponiveis.find(d => d.num == dezena).comprado = true;
+      atualizarUI();
+      document.getElementById('formulario').reset();
     }
-  } catch(err){
+  })
+  .catch(()=>{
     mensagem.textContent='❌ Erro ao enviar. Tente novamente.';
     mensagem.className='erro';
     mensagem.style.display='block';
-  }
+  });
 });
+
+carregarReservas();
 </script>
 </body>
 </html>
