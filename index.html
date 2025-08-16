@@ -1,165 +1,149 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>One Loto</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONE LOTO - Reservas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4b0082, #2e004f);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4b0082, #800080);
+      display: flex; justify-content: center; align-items: flex-start;
+      min-height: 100vh; padding: 2rem; color: #fff;
     }
-
     .container {
       background: #1a001f;
-      padding: 30px;
+      padding: 2rem;
       border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+      max-width: 450px; width: 100%;
+      box-shadow: 0 0 25px rgba(0,0,0,.5);
+      animation: fadeIn 1s ease;
     }
-
-    h1 {
-      color: gold;
-      margin-bottom: 10px;
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(.9);}
+      to {opacity: 1; transform: scale(1);}
     }
-
-    p {
-      color: #fff;
-      margin-bottom: 20px;
-    }
-
+    h1 { text-align: center; margin-bottom: 1rem; color: #ffd700; font-size: 2rem; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 70px);
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .6rem; margin-bottom: 1.2rem;
     }
-
-    .dezena {
-      width: 70px;
-      height: 70px;
+    .num {
       border: none;
-      border-radius: 12px;
-      background: #8000ff;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
+      padding: 1rem; border-radius: 12px;
+      font-weight: bold; font-size: 1rem;
+      cursor: pointer; transition: .3s;
+      background: #4b0082; color: #fff;
+      animation: pulse 1.5s infinite;
     }
-
-    .dezena:hover {
-      transform: scale(1.1);
-      background: #a64dff;
+    .num:hover { transform: scale(1.1); background: #6a0dad; }
+    .num.active { background: #ffd700; color: #000; animation: none; }
+    .num.reservada {
+      background: #ff4d4d !important;
+      color: #fff; cursor: not-allowed;
+      animation: none;
     }
-
-    .selecionada {
-      background: gold !important;
-      color: black !important;
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
     }
-
-    .reservada {
-      background: gray !important;
-      color: #222 !important;
-      cursor: not-allowed;
-    }
-
     input {
-      width: 90%;
-      padding: 10px;
-      margin-bottom: 15px;
+      width: 100%; padding: .9rem; border: none;
+      border-radius: 8px; margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%; padding: 1rem; border: none;
       border-radius: 8px;
-      border: none;
-      font-size: 16px;
+      background: linear-gradient(45deg,#ffd700,#ffa500);
+      font-weight: bold; font-size: 1.1rem;
+      cursor: pointer; transition: .3s;
+    }
+    button:hover { opacity: .85; }
+    .msg {
+      margin-top: 1rem; padding: .8rem;
+      border-radius: 8px; text-align: center;
+      font-weight: bold; display: none;
+    }
+    .msg.ok { background: #32cd32; color: #000; display: block; }
+    .msg.erro { background: #ff4d4d; color: #fff; display: block; }
+    .info {
+      margin-top: 1.5rem; font-size: .9rem; line-height: 1.5;
       text-align: center;
     }
-
-    button.reservar {
-      background: linear-gradient(to right, gold, orange);
-      border: none;
-      padding: 15px;
-      width: 100%;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    button.reservar:hover {
-      transform: scale(1.05);
-    }
-
-    .msg {
-      margin-top: 15px;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 8px;
-    }
-
-    .erro {
-      background: #ff4d4d;
-      color: white;
-    }
-
-    .sucesso {
-      background: #4CAF50;
-      color: white;
+    .contador {
+      margin-bottom: 1rem; text-align: center;
+      font-size: 1.1rem; font-weight: bold;
+      color: #ffd700;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ONE LOTO</h1>
-    <p>Escolha sua dezena:</p>
+    <h1>🎲 ONE LOTO</h1>
+    <p style="margin-bottom:1rem; text-align:center;">Escolha sua dezena:</p>
+    <div id="contador" class="contador">Carregando...</div>
     <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Digite seu nome">
-    <button class="reservar" onclick="reservar()">🎟️ Reservar</button>
-    <div class="msg" id="mensagem"></div>
+    <input type="text" id="nome" placeholder="Digite seu nome" />
+    <button onclick="reservar()">✅ Reservar Dezena</button>
+    <div id="mensagem" class="msg"></div>
+    <div class="info">
+      <p>💰 Valor por dezena: <b>R$15,00</b></p>
+      <p>🏆 Prêmio fixo: <b>R$263,00</b></p>
+      <p>🎯 Todo dia tem 1 ganhador</p>
+      <p>⚠️ Cada dezena só pode ser comprada uma vez</p>
+      <p>⏰ Pagamento até as 17:00</p>
+    </div>
   </div>
 
   <script>
-    const url = "https://script.google.com/macros/s/AKfycbzfKrgS3fWdYJ9mtuGvg0sL-XoO0A2cdN0S3MpNe962iWXUPl_YaXT9yJS3I7TrYy15Gw/exec";
-    let selecionada = null;
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwG_eSs89S_oAlWwylbZTgBUwpV1aAaOfl8bcArQQNx3k3KkMI7kocFfSY-tvWdyC0HLw/exec";
 
-    // Criar grid de botões
     const grid = document.getElementById("grid");
+    const contador = document.getElementById("contador");
+    let dezenaSelecionada = null;
+
+    // Monta a grade de 1 a 25
     for (let i = 1; i <= 25; i++) {
       const btn = document.createElement("button");
-      btn.innerText = i;
-      btn.classList.add("dezena");
-      btn.onclick = () => selecionar(btn, i);
+      btn.textContent = i;
+      btn.className = "num";
       btn.id = "dezena-" + i;
+      btn.onclick = () => {
+        if (btn.classList.contains("reservada")) return;
+        document.querySelectorAll(".num").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        dezenaSelecionada = i;
+      };
       grid.appendChild(btn);
     }
 
-    function selecionar(btn, numero) {
-      if (btn.classList.contains("reservada")) return;
-      document.querySelectorAll(".dezena").forEach(b => b.classList.remove("selecionada"));
-      btn.classList.add("selecionada");
-      selecionada = numero;
-    }
-
+    // Atualiza reservas e contador
     async function carregarReservas() {
       try {
-        const res = await fetch(`${url}?action=getReservas`);
-        const data = await res.json();
-        const reservas = data.reservas || [];
-        reservas.forEach(num => {
-          const btn = document.getElementById("dezena-" + num);
-          if (btn) {
-            btn.classList.add("reservada");
-            btn.disabled = true;
-          }
-        });
-      } catch (err) {
-        console.error("Erro ao carregar reservas", err);
+        const resp = await fetch(SCRIPT_URL + "?action=getReservas");
+        const data = await resp.json();
+        if (data.reservas) {
+          // marca botões
+          data.reservas.forEach(num => {
+            const btn = document.getElementById("dezena-" + num);
+            if (btn) {
+              btn.classList.add("reservada");
+              btn.disabled = true;
+            }
+          });
+          // contador
+          const total = 25;
+          const reservadas = data.reservas.length;
+          const disponiveis = total - reservadas;
+          contador.textContent = `🔥 Restam ${disponiveis} dezenas disponíveis de ${total}`;
+        }
+      } catch (e) {
+        contador.textContent = "Erro ao carregar reservas.";
       }
     }
 
@@ -167,35 +151,34 @@
       const nome = document.getElementById("nome").value.trim();
       const msg = document.getElementById("mensagem");
 
-      if (!nome || !selecionada) {
-        msg.innerText = "Preencha o nome e escolha uma dezena!";
+      if (!nome || !dezenaSelecionada) {
+        msg.textContent = "⚠️ Digite seu nome e escolha uma dezena!";
         msg.className = "msg erro";
         return;
       }
 
       try {
-        const res = await fetch(`${url}?action=reserva&nome=${encodeURIComponent(nome)}&dezena=${selecionada}`);
-        const data = await res.json();
+        const resp = await fetch(`${SCRIPT_URL}?action=reserva&nome=${encodeURIComponent(nome)}&dezena=${dezenaSelecionada}`);
+        const data = await resp.json();
+
+        msg.textContent = data.mensagem;
+        msg.className = "msg " + (data.status === "sucesso" ? "ok" : "erro");
 
         if (data.status === "sucesso") {
-          msg.innerText = data.mensagem;
-          msg.className = "msg sucesso";
-          const btn = document.getElementById("dezena-" + selecionada);
+          const btn = document.getElementById("dezena-" + dezenaSelecionada);
           btn.classList.add("reservada");
           btn.disabled = true;
-          selecionada = null;
+          dezenaSelecionada = null;
           document.getElementById("nome").value = "";
-        } else {
-          msg.innerText = data.mensagem;
-          msg.className = "msg erro";
+          carregarReservas(); // atualiza contador
         }
-      } catch (err) {
-        msg.innerText = "Erro: falha ao conectar ao servidor.";
+      } catch (e) {
+        msg.textContent = "Erro ao conectar ao servidor.";
         msg.className = "msg erro";
       }
     }
 
-    // carregar reservas ao abrir
+    // Carrega reservas ao abrir
     carregarReservas();
   </script>
 </body>
