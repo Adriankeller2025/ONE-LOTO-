@@ -17,7 +17,7 @@ body{
   background:#2e003e;
   border-radius:20px;
   padding:2rem;
-  max-width:550px;
+  max-width:600px;
   width:100%;
   box-shadow:0 0 20px rgba(255,255,255,0.1);
   text-align:center;
@@ -42,109 +42,94 @@ input[type="text"]{
   gap:12px;
   margin-top:0.5rem;
 }
-.cota-opcao{cursor:pointer;user-select:none;display:block;}
 .cota-opcao input[type="radio"]{display:none;}
 .box-cota{
   background:#3b1a57;
-  border-radius:15px;
+  border-radius:12px;
   padding:15px 0;
   font-weight:700;
   color:#ffda77;
-  font-size:1.2rem;
+  font-size:1.1rem;
   border:2px solid transparent;
   transition:all 0.3s ease;
-  box-shadow:0 0 10px rgba(255,218,119,0.3);
   text-align:center;
+  cursor:pointer;
 }
-.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 20px #ffd700;color:#fff;}
-input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 25px #ffda77;}
+.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 10px #ffd700;color:#fff;}
+input[type="radio"]:checked + .box-cota{
+  background:linear-gradient(135deg,#6b3db0,#a267e8);
+  border-color:#ffda77;
+  color:#fff;
+  box-shadow:0 0 20px #ffda77;
+}
 .box-cota.disabled{opacity:0.4;cursor:not-allowed;}
 button{
   margin-top:1rem;width:100%;padding:16px;
   background:linear-gradient(to right,#ffd700,#ff9a00);
   border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
-  cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
+  cursor:pointer;transition:transform 0.3s ease;
+  animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
 }
-button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
-@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}50%{transform:scale(1.05);box-shadow:0 0 25px #ffd700,0 0 40px #ff9a00;}100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}}
-#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
+button:hover{transform:scale(1.05);}
+@keyframes pulse{
+  0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}
+  50%{transform:scale(1.05);box-shadow:0 0 25px #ffd700,0 0 40px #ff9a00;}
+  100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}
+}
+#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;}
 #mensagem.sucesso{background-color:#4caf50;color:#fff;}
 #mensagem.erro{background-color:#e53935;color:#fff;}
 .info-bolao{
-  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
+  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;
+  box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
 }
 .info-bolao p{margin:5px 0;}
-@media(max-width:480px){
-  .cotacoes{grid-template-columns:repeat(5,1fr);gap:8px;}
-  input[type="text"]{font-size:1rem;padding:10px;}
-  .box-cota{font-size:1rem;padding:12px 0;}
-  button{font-size:1.1rem;padding:14px;}
-}
 </style>
 </head>
 <body>
 <main class="card">
-<h1>💜 ONE LOTO 💜</h1>
+  <h1>💜 ONE LOTO 💜</h1>
 
-<form id="formulario" novalidate>
-<label for="nome">Seu nome:</label>
-<input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required />
+  <form id="formulario" novalidate>
+    <label for="nome">Seu nome:</label>
+    <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required />
 
-<label>Escolha sua dezena:</label>
-<div class="cotacoes" id="cotacoes"></div>
+    <label>Escolha sua dezena:</label>
+    <div class="cotacoes" id="cotacoes"></div>
 
-<button type="submit">✅ Reservar Dezena</button>
-</form>
+    <button type="submit">✅ Reservar Dezena</button>
+  </form>
 
-<section class="info-bolao">
-<p>💜 <strong>ONE LOTO</strong> 💜</p>
-<p>💰 Valor por dezena: R$15,00</p>
-<p>🥳 Prêmio fixo: R$263,00</p>
-<p>💸 Todo dia tem 1 Ganhador</p>
-<p>⚠️ Cada dezena só pode ser comprada uma vez!</p>
-<p>⌚ Pagamento até as <strong>17:00</strong></p>
-</section>
+  <section class="info-bolao">
+    <p>💜 <strong>ONE LOTO</strong> 💜</p>
+    <p>💰 Valor por dezena: R$15,00</p>
+    <p>🥳 Prêmio fixo: R$263,00</p>
+    <p>💸 Todo dia tem 1 Ganhador</p>
+    <p>⚠️ Cada dezena só pode ser comprada uma vez!</p>
+    <p>⌚ Pagamento até as <strong>17:00</strong></p>
+  </section>
 
-<div id="mensagem"></div>
+  <div id="mensagem"></div>
 </main>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby2akkD-BSWXYtquU9cf9xFGhJV7QNjC6e9-139aLX6VVOAHPtlqORRp7A8rvgqS9c_/exec";
+// cria dezenas 01–25
 const container = document.getElementById('cotacoes');
-const mensagem = document.getElementById('mensagem');
-
-async function carregarDezenas(){
-  try {
-    const res = await fetch(API_URL);
-    const reservadas = await res.json();
-    container.innerHTML = "";
-    for(let i=1;i<=25;i++){
-      const label = document.createElement('label');
-      label.className = 'cota-opcao';
-      const input = document.createElement('input');
-      input.type = 'radio';
-      input.name = 'dezena';
-      input.value = i;
-      const div = document.createElement('div');
-      div.className = 'box-cota';
-      div.textContent = i;
-      if(reservadas.includes(String(i))){
-        div.classList.add('disabled');
-        input.disabled = true;
-      }
-      label.appendChild(input);
-      label.appendChild(div);
-      container.appendChild(label);
-    }
-  } catch (err) {
-    console.error("Erro ao carregar dezenas:", err);
-  }
+for(let i=1;i<=25;i++){
+  const label = document.createElement('label');
+  label.className='cota-opcao';
+  label.innerHTML=`<input type="radio" name="dezena" value="${i}">
+                   <div class="box-cota">${i.toString().padStart(2,'0')}</div>`;
+  container.appendChild(label);
 }
 
-document.getElementById('formulario').addEventListener('submit', async e=>{
+const formulario=document.getElementById('formulario');
+const mensagem=document.getElementById('mensagem');
+
+formulario.addEventListener('submit', async e=>{
   e.preventDefault();
-  const nome = document.getElementById('nome').value.trim();
-  const dezena = document.querySelector('input[name="dezena"]:checked')?.value;
+  const nome=document.getElementById('nome').value.trim();
+  const dezena=document.querySelector('input[name="dezena"]:checked')?.value;
 
   if(!nome || !dezena){
     mensagem.textContent='❌ Preencha seu nome e escolha uma dezena.';
@@ -153,25 +138,30 @@ document.getElementById('formulario').addEventListener('submit', async e=>{
     return;
   }
 
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify({nome, dezena})
+  // envia pro Google Apps Script
+  try{
+    const resp=await fetch("https://script.google.com/macros/s/AKfycby2akkD-BSWXYtquU9cf9xFGhJV7QNjC6e9-139aLX6VVOAHPtlqORRp7A8rvgqS9c_/exec",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({nome:nome,dezena:dezena})
     });
-    const data = await res.json();
-    mensagem.textContent = data.msg;
-    mensagem.className = data.status === "ok" ? 'sucesso' : 'erro';
-    mensagem.style.display = 'block';
-    if(data.status === "ok"){
-      document.getElementById('formulario').reset();
-      carregarDezenas();
+    const data=await resp.json();
+
+    if(data.status==="ok"){
+      mensagem.textContent=data.msg;
+      mensagem.className='sucesso';
+    }else{
+      mensagem.textContent=data.msg;
+      mensagem.className='erro';
     }
-  } catch (err) {
-    console.error("Erro ao enviar:", err);
+    mensagem.style.display='block';
+    formulario.reset();
+  }catch(err){
+    mensagem.textContent="❌ Erro ao conectar. Tente novamente.";
+    mensagem.className='erro';
+    mensagem.style.display='block';
   }
 });
-
-carregarDezenas();
 </script>
 </body>
 </html>
