@@ -1,63 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ONE LOTO - Reservas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family:'Poppins',sans-serif;
-      background:linear-gradient(135deg,#4b0082,#800080);
-      display:flex;justify-content:center;align-items:flex-start;
-      min-height:100vh;padding:2rem;color:#fff;
-    }
-    .container{
-      background:#1a001f;
-      padding:2rem;
-      border-radius:15px;
-      max-width:420px;width:100%;
-      box-shadow:0 0 20px rgba(0,0,0,.4);
-    }
-    h1{text-align:center;margin-bottom:1rem;color:#ffd700;}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      gap:.6rem;margin-bottom:1.2rem;
-    }
-    .num{
-      background:#4b0082;
-      border:none;color:#fff;
-      font-weight:bold;
-      padding:.8rem;border-radius:10px;
-      cursor:pointer;transition:.3s;
-    }
+    body{font-family:sans-serif;background:#2c003e;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;}
+    .container{background:#1a001f;padding:20px;border-radius:12px;max-width:420px;width:100%;box-shadow:0 0 15px rgba(0,0,0,0.5);}
+    h1{text-align:center;color:#ffd700;}
+    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:15px 0;}
+    .num{padding:12px;background:#4b0082;border:none;border-radius:8px;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
     .num:hover{background:#6a0dad;}
     .num.active{background:#ffd700;color:#000;}
-    .num:disabled{
-      background:#555;
-      color:#999;
-      cursor:not-allowed;
-    }
-    input{
-      width:100%;padding:.7rem;border:none;
-      border-radius:8px;margin-bottom:1rem;
-      font-size:1rem;
-    }
-    button{
-      width:100%;padding:.9rem;border:none;
-      border-radius:8px;
-      background:linear-gradient(45deg,#ffd700,#ffa500);
-      font-weight:bold;font-size:1rem;cursor:pointer;
-      transition:.3s;
-    }
-    button:hover{opacity:.9;}
-    .msg{
-      margin-top:1rem;padding:.8rem;
-      border-radius:8px;text-align:center;
-      font-weight:bold;display:none;
-    }
+    .num.reservado{background:#555;color:#aaa;cursor:not-allowed;}
+    input,button{width:100%;padding:10px;margin-top:10px;border:none;border-radius:8px;font-size:1rem;}
+    button{background:linear-gradient(45deg,#ffd700,#ffa500);font-weight:bold;cursor:pointer;}
+    button:hover{opacity:0.9;}
+    .msg{margin-top:10px;padding:10px;border-radius:8px;text-align:center;display:none;}
     .msg.ok{background:#32cd32;color:#000;display:block;}
     .msg.erro{background:#ff4d4d;color:#fff;display:block;}
   </style>
@@ -65,34 +24,27 @@
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
-    <p style="margin-bottom:1rem;">Escolha sua dezena:</p>
-    <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Digite seu nome" />
-    <button onclick="reservar()">✅ Reservar Dezena</button>
+    <p>Escolha sua dezena:</p>
+    <div id="grid" class="grid"></div>
+    <input type="text" id="nome" placeholder="Digite seu nome">
+    <button onclick="reservar()">✅ Reservar</button>
     <div id="mensagem" class="msg"></div>
-    <div style="margin-top:1.5rem;font-size:.9rem;line-height:1.4;">
-      <p>💰 Valor por dezena: <b>R$15,00</b></p>
-      <p>🏆 Prêmio fixo: <b>R$263,00</b></p>
-      <p>🎯 Todo dia tem 1 ganhador</p>
-      <p>⚠️ Cada dezena só pode ser comprada uma vez</p>
-      <p>⏰ Pagamento até as 17:00</p>
-    </div>
   </div>
 
   <script>
-    // URL do seu Apps Script (publique como web app e cole aqui!)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYBnZARUnmqxAqxBoP6Aslga2RoMo-MZLjZJu95kMJ2TBu7IUB8met5vvOsSkq9gPEQg/exec";
+    // 🔗 SUA URL DO APPS SCRIPT (troque aqui)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEKgC_2qGAZGgwNNQ-NxiMdTHgUOWrJaKMvf4W2RuyS_N96bFzwDrd0H1yMx2caeCoLw/exec";
 
-    const grid = document.getElementById("grid");
-    let dezenaSelecionada = null;
+    const grid=document.getElementById("grid");
+    let dezenaSelecionada=null;
 
-    // Cria botões de 1 a 25
+    // Monta grade de 1 a 25
     for(let i=1;i<=25;i++){
       const btn=document.createElement("button");
       btn.textContent=i;
       btn.className="num";
       btn.onclick=()=>{
-        if(btn.disabled) return; // se já reservada, não deixa clicar
+        if(btn.classList.contains("reservado"))return;
         document.querySelectorAll(".num").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
         dezenaSelecionada=i;
@@ -100,28 +52,23 @@
       grid.appendChild(btn);
     }
 
-    // 🔹 Buscar dezenas reservadas e bloquear
-    async function carregarReservas(){
+    // 🔹 Carrega as dezenas já reservadas do Google Sheets
+    async function carregarReservadas(){
       try{
-        const resp = await fetch(SCRIPT_URL);
-        const data = await resp.json();
-
+        const resp=await fetch(SCRIPT_URL);
+        const data=await resp.json();
         if(data.sucesso){
-          data.dezenas.forEach(num=>{
-            const btn = [...document.querySelectorAll(".num")]
-              .find(b => b.textContent == num);
-            if(btn){
-              btn.disabled = true;
-            }
+          data.dezenas.forEach(d=>{
+            const btn=[...document.querySelectorAll(".num")].find(b=>b.textContent==d);
+            if(btn){btn.classList.add("reservado");btn.disabled=true;}
           });
         }
       }catch(e){
-        console.error("Erro ao carregar reservas", e);
+        console.error("Erro ao carregar dezenas reservadas",e);
       }
     }
 
-    carregarReservas();
-
+    // 🔹 Envia reserva
     async function reservar(){
       const nome=document.getElementById("nome").value.trim();
       const msg=document.getElementById("mensagem");
@@ -141,14 +88,17 @@
         msg.className="msg "+(data.sucesso?"ok":"erro");
 
         if(data.sucesso){
-          carregarReservas(); // atualiza bloqueios depois de reservar
+          const btn=[...document.querySelectorAll(".num")].find(b=>b.textContent==dezenaSelecionada);
+          if(btn){btn.classList.add("reservado");btn.disabled=true;}
         }
-
       }catch(e){
         msg.textContent="Erro ao conectar ao servidor.";
         msg.className="msg erro";
       }
     }
+
+    // 🚀 Ao abrir a página, já bloqueia as dezenas reservadas
+    carregarReservadas();
   </script>
 </body>
 </html>
