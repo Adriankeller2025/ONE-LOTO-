@@ -1,86 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>ONE LOTO</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family:'Poppins',sans-serif;
-      background: linear-gradient(135deg,#4b0082,#800080);
-      display:flex;justify-content:center;align-items:flex-start;
-      min-height:100vh;padding:2rem;color:#fff;
-    }
-    .card{
-      background:#2e003e;
-      border-radius:20px;
-      padding:2rem;
-      max-width:650px;
-      width:100%;
-      box-shadow:0 0 20px rgba(255,255,255,0.1);
-      text-align:center;
-      border:2px solid #ffda77;
-      display:flex;
-      flex-direction:column;
-      gap:1.5rem;
-    }
-    h1{
-      font-size:2rem;
-      color:#ffccff;
-      font-weight:700;
-      margin-bottom:0.5rem;
-    }
-    label{font-weight:600;text-align:left;color:#ffd700;font-size:1.1rem;margin-bottom:0.3rem;display:block;}
-    input[type="text"]{
-      width:100%;padding:12px;border-radius:10px;border:none;background:#3b1a57;color:#fff;font-size:1.1rem;margin-bottom:1rem;
-    }
-    .cotacoes{
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      gap:12px;
-      margin-top:0.5rem;
-    }
-    .cota-opcao{cursor:pointer;user-select:none;display:block;}
-    .cota-opcao input[type="radio"]{display:none;}
-    .box-cota{
-      background:#3b1a57;
-      border-radius:15px;
-      padding:15px 0;
-      font-weight:700;
-      color:#ffda77;
-      font-size:1.2rem;
-      border:2px solid transparent;
-      transition:all 0.3s ease;
-      box-shadow:0 0 10px rgba(255,218,119,0.3);
-      text-align:center;
-    }
-    .box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 20px #ffd700;color:#fff;}
-    input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 25px #ffda77;}
-    .box-cota.disabled{opacity:0.4;cursor:not-allowed;}
-    button{
-      margin-top:1rem;width:100%;padding:16px;
-      background:linear-gradient(to right,#ffd700,#ff9a00);
-      border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
-      cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
-    }
-    button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
-    @keyframes pulse{0%{transform:scale(1);box-shadow:0 0 10px #ffda77;}50%{transform:scale(1.05);box-shadow:0 0 25px #ffda77,0 0 40px #ff9a00;}100%{transform:scale(1);box-shadow:0 0 10px #ffda77;}}
-    #mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
-    #mensagem.sucesso{background-color:#4caf50;color:#fff;}
-    #mensagem.erro{background-color:#e53935;color:#fff;}
-    .info-bolao{
-      margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
-    }
-    .info-bolao p{margin:5px 0;}
-    @media(max-width:480px){
-      .cotacoes{grid-template-columns:repeat(5,1fr);gap:8px;}
-      input[type="text"]{font-size:1rem;padding:10px;}
-      .box-cota{font-size:1rem;padding:12px 0;}
-      button{font-size:1.1rem;padding:14px;}
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>ONE LOTO - Reservas</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Poppins',sans-serif;
+  background: linear-gradient(135deg,#4b0082,#800080);
+  display:flex;justify-content:center;align-items:flex-start;
+  min-height:100vh;padding:2rem;color:#fff;
+}
+.card{
+  background:#2e003e;
+  border-radius:20px;
+  padding:2rem;
+  max-width:600px;
+  width:100%;
+  box-shadow:0 0 20px rgba(255,255,255,0.15);
+  text-align:center;
+  border:2px solid #ffda77;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+h1{
+  font-size:2.2rem;
+  color:#ffccff;
+  font-weight:700;
+}
+label{font-weight:600;text-align:left;color:#ffd700;font-size:1.1rem;margin-bottom:0.3rem;display:block;}
+input[type="text"]{
+  width:100%;padding:12px;border-radius:10px;border:none;background:#3b1a57;color:#fff;font-size:1.1rem;margin-bottom:1rem;
+}
+.cotacoes{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-top:0.5rem;
+}
+.cota-opcao{cursor:pointer;user-select:none;display:block;}
+.cota-opcao input[type="radio"]{display:none;}
+.box-cota{
+  background:#3b1a57;
+  border-radius:15px;
+  padding:15px 0;
+  font-weight:700;
+  color:#ffda77;
+  font-size:1.2rem;
+  border:2px solid transparent;
+  transition:all 0.3s ease;
+  text-align:center;
+  box-shadow:0 0 10px rgba(255,218,119,0.25);
+}
+.box-cota:hover{background:linear-gradient(135deg,#5e2b9f,#8133c9);border-color:#ffd700;box-shadow:0 0 15px #ffd700;color:#fff;}
+input[type="radio"]:checked + .box-cota{background:linear-gradient(135deg,#6b3db0,#a267e8);border-color:#ffda77;color:#fff;box-shadow:0 0 20px #ffda77;}
+.box-cota.disabled{opacity:0.4;cursor:not-allowed;}
+button{
+  margin-top:1rem;width:100%;padding:16px;
+  background:linear-gradient(to right,#ffd700,#ff9a00);
+  border:none;border-radius:12px;font-weight:700;color:#000;font-size:1.2rem;
+  cursor:pointer;transition:transform 0.3s ease;animation:pulse 2.5s infinite;box-shadow:0 0 10px #ffda77;
+}
+button:hover{transform:scale(1.05);box-shadow:0 0 20px #ffd700,0 0 30px #ff9a00;}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+#mensagem{margin-top:1rem;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem;display:none;word-break:break-word;}
+#mensagem.sucesso{background-color:#4caf50;color:#fff;}
+#mensagem.erro{background-color:#e53935;color:#fff;}
+.info-bolao{
+  margin-top:20px;padding:15px;background:#350055;border-radius:15px;color:#ffd700;font-weight:600;box-shadow:0 0 15px #ffda77;font-size:1rem;line-height:1.5;text-align:left;
+}
+.info-bolao p{margin:5px 0;}
+</style>
 </head>
 <body>
 <main class="card">
@@ -109,43 +102,38 @@
 </main>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby2akkD-BSWXYtquU9cf9xFGhJV7QNjC6e9-139aLX6VVOAHPtlqORRp7A8rvgqS9c_/exec";
+// URL do seu App Script publicado (/exec)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydx8b1d_UWhvqBT7AT2R8WbVNF98M4oj2KsM6tOwwBgx-ISOSvwmzjBXjI9tSANBk89A/exec";
 
-// gera dezenas 01–25
-const dezenasDisponiveis = Array.from({length:25},(_,i)=>({num:(i+1).toString().padStart(2,"0"), comprado:false}));
+// Cria dezenas 1 a 25
 const container = document.getElementById('cotacoes');
-
-dezenasDisponiveis.forEach(d=>{
+for(let i=1;i<=25;i++){
   const label = document.createElement('label');
   label.className='cota-opcao';
-  label.innerHTML=`<input type="radio" name="dezena" value="${d.num}"><div class="box-cota">${d.num}</div>`;
+  label.innerHTML=`<input type="radio" name="dezena" value="${i}"><div class="box-cota">${i}</div>`;
   container.appendChild(label);
-});
-
-function atualizarUI(reservadas){
-  document.querySelectorAll('.box-cota').forEach(box=>{
-    const val = box.textContent;
-    if(reservadas.includes(val)){
-      box.classList.add('disabled');
-      box.previousElementSibling.disabled=true;
-    }
-  });
 }
 
-// carrega dezenas já reservadas do Google Sheet
-async function carregarReservadas(){
+const formulario = document.getElementById('formulario');
+const mensagem = document.getElementById('mensagem');
+
+// Ao carregar, busca quais dezenas já estão ocupadas
+async function carregarReservas(){
   try{
-    const resp = await fetch(API_URL);
-    const reservadas = await resp.json();
-    atualizarUI(reservadas);
+    const res = await fetch(SCRIPT_URL);
+    const reservadas = await res.json();
+    document.querySelectorAll('.box-cota').forEach(box=>{
+      const val = parseInt(box.textContent);
+      if(reservadas.includes(String(val))){
+        box.classList.add('disabled');
+        box.previousElementSibling.disabled=true;
+      }
+    });
   }catch(err){
     console.error("Erro ao carregar reservas:",err);
   }
 }
-carregarReservadas();
-
-const formulario = document.getElementById('formulario');
-const mensagem = document.getElementById('mensagem');
+carregarReservas();
 
 formulario.addEventListener('submit', async e=>{
   e.preventDefault();
@@ -160,24 +148,19 @@ formulario.addEventListener('submit', async e=>{
   }
 
   try{
-    const resp = await fetch(API_URL,{
-      method:"POST",
-      body:JSON.stringify({nome,dezena})
+    const resposta = await fetch(SCRIPT_URL,{
+      method:'POST',
+      body: JSON.stringify({nome, dezena})
     });
-    const result = await resp.json();
-    if(result.status==="ok"){
-      mensagem.textContent=result.msg;
-      mensagem.className='sucesso';
-      mensagem.style.display='block';
-      carregarReservadas();
-      formulario.reset();
-    }else{
-      mensagem.textContent=result.msg;
-      mensagem.className='erro';
-      mensagem.style.display='block';
-    }
+    const result = await resposta.json();
+
+    mensagem.textContent = result.msg;
+    mensagem.className = result.status === "ok" ? "sucesso" : "erro";
+    mensagem.style.display='block';
+
+    if(result.status==="ok"){ carregarReservas(); formulario.reset(); }
   }catch(err){
-    mensagem.textContent="❌ Erro ao conectar. Tente novamente.";
+    mensagem.textContent='❌ Erro ao conectar com o servidor.';
     mensagem.className='erro';
     mensagem.style.display='block';
   }
