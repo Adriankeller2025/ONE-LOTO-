@@ -6,160 +6,205 @@
   <title>ONE LOTO</title>
   <style>
     body {
+      background: linear-gradient(135deg, #3a0071, #5d0f82);
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4b0082, #800080);
-      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
     }
+
     .container {
-      background: #1a001f;
-      padding: 30px;
+      background: #1c001f;
+      padding: 25px;
       border-radius: 20px;
-      box-shadow: 0 0 30px rgba(255, 255, 0, 0.6);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
       text-align: center;
-      width: 320px;
-      animation: pulse 3s infinite;
+      width: 300px;
+      color: white;
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-      50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
-      100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-    }
+
     h1 {
       color: #FFD700;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
+
     .number {
-      background: #800080;
-      padding: 15px;
+      background: #7a0bc0;
+      color: white;
+      border: none;
       border-radius: 10px;
+      padding: 15px;
+      font-size: 16px;
       cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.3s;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .number:hover {
       transform: scale(1.1);
-      background: #9932CC;
+      box-shadow: 0 0 15px #FFD700;
     }
-    .selected {
-      background: #FFD700 !important;
-      color: #000;
+
+    .number.selected {
+      background: #FFD700;
+      color: black;
+      font-weight: bold;
     }
-    .reserved {
+
+    .number.reserved {
       background: #444 !important;
-      color: #999;
+      color: #aaa !important;
       cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
     }
+
     input {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: none;
-      font-size: 16px;
+      font-size: 14px;
     }
-    button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(90deg, #FFD700, #FFA500);
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
+
+    button#reservar {
+      background: linear-gradient(90deg, #FFD700, #FF8C00);
+      color: black;
       font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 16px;
       cursor: pointer;
-      transition: transform 0.2s;
+      width: 100%;
+      transition: transform 0.2s, background 0.3s;
     }
-    button:hover {
+
+    button#reservar:hover {
       transform: scale(1.05);
+      background: linear-gradient(90deg, #FF8C00, #FFD700);
     }
-    #mensagem {
+
+    .msg {
       margin-top: 15px;
       padding: 10px;
       border-radius: 8px;
       display: none;
+      font-weight: bold;
     }
-    .erro { background: #ff4d4d; }
-    .sucesso { background: #32cd32; }
+
+    .msg.sucesso {
+      background: #28a745;
+      color: white;
+    }
+
+    .msg.erro {
+      background: #dc3545;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
+    <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Digite seu nome">
-    <button onclick="reservar()">🎟️ Reservar</button>
-    <div id="mensagem"></div>
+    <input type="text" id="nome" placeholder="Seu nome" />
+    <button id="reservar">🎟️ Reservar</button>
+    <div class="msg" id="msg"></div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwnh_l8RnujAwIcuQalcJKMTzubgxIAy3ctUTJCMpzIJSN-B2ioKLHvaY2_5tMazE9bJA/exec";
-    let selecionado = null;
+    const API_URL = "https://script.google.com/macros/s/AKfycbz19Ddo5DQeOK_d4l3GtZgCOcNWBhPHdN-GeQhItQjNmsQ7a2Q1Z19LOw3aKdg8gb6bWg/exec";
 
-    // Cria os botões
     const grid = document.getElementById("grid");
+    const msg = document.getElementById("msg");
+    const btnReservar = document.getElementById("reservar");
+    let selected = null;
+
+    // Criar botões de 1 a 25
     for (let i = 1; i <= 25; i++) {
-      const btn = document.createElement("div");
+      const btn = document.createElement("button");
       btn.textContent = i;
       btn.classList.add("number");
-      btn.onclick = () => selecionar(btn, i);
+      btn.dataset.num = i;
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("reserved")) return;
+        document.querySelectorAll(".number").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selected = i;
+      });
       grid.appendChild(btn);
     }
 
-    function selecionar(botao, numero) {
-      if (botao.classList.contains("reserved")) return;
-      document.querySelectorAll(".number").forEach(b => b.classList.remove("selected"));
-      botao.classList.add("selected");
-      selecionado = numero;
-    }
+    // Carregar reservas existentes
+    async function carregarReservas() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
 
-    async function carregarReservados() {
-      const res = await fetch(API_URL);
-      const reservados = await res.json();
-      document.querySelectorAll(".number").forEach(btn => {
-        if (reservados.includes(btn.textContent)) {
-          btn.classList.add("reserved");
+        if (data.sucesso) {
+          data.reservas.forEach(num => {
+            const btn = document.querySelector(`.number[data-num='${num}']`);
+            if (btn) {
+              btn.classList.add("reserved");
+              btn.disabled = true;
+            }
+          });
         }
-      });
+      } catch (err) {
+        console.error("Erro ao carregar reservas:", err);
+      }
     }
 
-    async function reservar() {
-      const nome = document.getElementById("nome").value;
-      const msg = document.getElementById("mensagem");
-      msg.style.display = "block";
+    carregarReservas();
 
-      if (!nome || !selecionado) {
-        msg.textContent = "Preencha o nome e escolha uma dezena!";
-        msg.className = "erro";
+    // Reservar número
+    btnReservar.addEventListener("click", async () => {
+      const nome = document.getElementById("nome").value.trim();
+
+      if (!nome || !selected) {
+        showMsg("Preencha seu nome e escolha uma dezena!", "erro");
         return;
       }
 
       try {
         const res = await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify({ nome, dezena: selecionado })
+          body: JSON.stringify({ nome, dezena: selected })
         });
+
         const data = await res.json();
-        msg.textContent = data.mensagem;
-        msg.className = data.sucesso ? "sucesso" : "erro";
 
-        if (data.sucesso) carregarReservados();
-      } catch (e) {
-        msg.textContent = "Erro: Falha ao conectar ao servidor.";
-        msg.className = "erro";
+        if (data.sucesso) {
+          showMsg(data.mensagem, "sucesso");
+          const btn = document.querySelector(`.number[data-num='${selected}']`);
+          btn.classList.add("reserved");
+          btn.disabled = true;
+          btn.classList.remove("selected");
+          selected = null;
+        } else {
+          showMsg(data.mensagem, "erro");
+        }
+      } catch (err) {
+        showMsg("Erro: Falha ao conectar ao servidor.", "erro");
       }
-    }
+    });
 
-    carregarReservados();
+    function showMsg(text, type) {
+      msg.textContent = text;
+      msg.className = "msg " + type;
+      msg.style.display = "block";
+    }
   </script>
 </body>
 </html>
