@@ -12,6 +12,7 @@
       background: linear-gradient(135deg, #4b0082, #800080);
       display: flex; justify-content: center; align-items: flex-start;
       min-height: 100vh; padding: 1rem; color: #fff;
+      flex-direction: column;
     }
     .container {
       background: #1a001f;
@@ -20,6 +21,7 @@
       max-width: 450px; width: 100%;
       box-shadow: 0 0 25px rgba(0,0,0,.5);
       animation: fadeIn 1s ease;
+      margin: 0 auto;
     }
     @keyframes fadeIn {
       from {opacity: 0; transform: scale(.9);}
@@ -85,11 +87,49 @@
       font-size: 1.05rem; font-weight: bold;
       color: #ffd700;
     }
+    /* Rodapé de Segurança */
+    .footer {
+      margin: 2rem auto 0 auto;
+      padding: 2rem 1rem;
+      background: #0d0d0d;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 600px;
+    }
+    .seguranca {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .item {
+      flex: 1 1 120px;
+      margin: .5rem;
+      color: #fff;
+    }
+    .icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: .3rem;
+    }
+    .item h4 {
+      margin-bottom: .3rem;
+      color: #ffd700;
+    }
+    .item p {
+      font-size: .85rem;
+      opacity: .8;
+    }
+    .copy {
+      font-size: .8rem;
+      opacity: .7;
+    }
     /* Responsividade */
     @media (max-width: 480px) {
       .container { padding: 1rem; }
       .num { padding: .8rem; font-size: .9rem; }
       button, input { font-size: .95rem; }
+      .seguranca { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
@@ -110,6 +150,28 @@
       <p>⏰ Pagamento até às 17:00</p>
     </div>
   </div>
+
+  <!-- Rodapé de Segurança -->
+  <footer class="footer">
+    <div class="seguranca">
+      <div class="item">
+        <span class="icon">🔒</span>
+        <h4>Site Seguro</h4>
+        <p>Conexão protegida por SSL</p>
+      </div>
+      <div class="item">
+        <span class="icon">🛡️</span>
+        <h4>LGPD</h4>
+        <p>Seus dados estão protegidos</p>
+      </div>
+      <div class="item">
+        <span class="icon">🔞</span>
+        <h4>Jogo Responsável</h4>
+        <p>Apenas para maiores de 18 anos</p>
+      </div>
+    </div>
+    <p class="copy">© 2025 Todos os direitos reservados. Jogue com responsabilidade.</p>
+  </footer>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfKrgS3fWdYJ9mtuGvg0sL-XoO0A2cdN0S3MpNe962iWXUPl_YaXT9yJS3I7TrYy15Gw/exec";
@@ -139,7 +201,6 @@
         const resp = await fetch(SCRIPT_URL + "?action=getReservas");
         const data = await resp.json();
         if (data.reservas) {
-          // marca botões
           data.reservas.forEach(num => {
             const btn = document.getElementById("dezena-" + num);
             if (btn) {
@@ -147,7 +208,6 @@
               btn.disabled = true;
             }
           });
-          // contador
           const total = 25;
           const reservadas = data.reservas.length;
           const disponiveis = total - reservadas;
@@ -181,7 +241,7 @@
           btn.disabled = true;
           dezenaSelecionada = null;
           document.getElementById("nome").value = "";
-          carregarReservas(); // atualiza contador
+          carregarReservas();
         }
       } catch (e) {
         msg.textContent = "Erro ao conectar ao servidor.";
@@ -189,7 +249,6 @@
       }
     }
 
-    // Carrega reservas ao abrir
     carregarReservas();
   </script>
 </body>
