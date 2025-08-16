@@ -2,92 +2,79 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ONE LOTO</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #4B0082;
-      color: white;
+      background-color: #3b0066;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      font-family: Arial, sans-serif;
     }
-
     .container {
       background: #1a001f;
-      padding: 30px;
-      border-radius: 15px;
+      padding: 20px;
+      border-radius: 12px;
       text-align: center;
+      color: white;
       width: 300px;
     }
-
     h1 {
-      color: #FFD700;
-      margin-bottom: 20px;
+      color: gold;
     }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin: 15px 0;
     }
-
-    .numero {
-      background: #6a0dad;
+    .grid button {
+      background: purple;
       border: none;
-      color: white;
-      padding: 15px;
       border-radius: 8px;
-      cursor: pointer;
+      padding: 10px;
       font-size: 16px;
+      color: white;
+      cursor: pointer;
     }
-
-    .numero:hover {
-      background: #9932cc;
-    }
-
-    .numero.selecionado {
+    .grid button.selected {
       background: gold;
       color: black;
       font-weight: bold;
     }
-
-    .numero.ocupado {
-      background: #555 !important;
+    .grid button.reserved {
+      background: gray;
       cursor: not-allowed;
-      opacity: 0.6;
     }
-
     input {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       margin: 10px 0;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
     }
-
-    #reservar {
-      width: 100%;
-      padding: 12px;
+    button#reservar {
       background: orange;
       border: none;
+      padding: 10px;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      margin-bottom: 15px;
+      width: 100%;
     }
-
-    #reservar:hover {
-      background: darkorange;
+    .msg {
+      margin-top: 10px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
     }
-
-    .info {
-      font-size: 14px;
-      text-align: left;
+    .erro {
+      background: red;
+    }
+    .sucesso {
+      background: green;
     }
   </style>
 </head>
@@ -96,98 +83,81 @@
     <h1>ONE LOTO</h1>
     <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
-
-    <input type="text" id="nome" placeholder="Digite seu nome">
-    <button id="reservar">✅ Reservar</button>
-
-    <div class="info">
-      <p>💰 Valor por dezena: <b>R$15,00</b></p>
-      <p>🏆 Prêmio fixo: <b>R$263,00</b></p>
-      <p>📌 Todo dia tem 1 ganhador</p>
-      <p>⚠️ Cada dezena só pode ser comprada uma vez</p>
-      <p>⏰ Pagamento até as 17:00</p>
-    </div>
+    <input type="text" id="nome" placeholder="Digite seu nome" />
+    <button id="reservar">🔒 Reservar</button>
+    <div id="mensagem" class="msg"></div>
   </div>
 
   <script>
-    // URL do Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbwSAsALDUL7Tkayln3YqmAupoboIAVs1WVlosTpH091wFaqA6fLslQcSBb_qNYR9o-oRg/exec";
+    // 🔗 TROQUE ESSA URL PELA DO SEU APP SCRIPT
+    const url = "https://script.google.com/macros/s/AKfycbxmPdVbNhjOc0jJwmxp-bbFlr0oQ0wvbiSApvzmb4KBMdOywD8Hr2Nm9i-GrmpNhNumDg/exec";
 
-    let numeroSelecionado = null;
+    let selecionada = null;
 
-    // Cria botões 1-25
+    // cria botões 1-25
     const grid = document.getElementById("grid");
     for (let i = 1; i <= 25; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
-      btn.classList.add("numero");
-      btn.dataset.numero = i;
-      btn.addEventListener("click", () => {
-        if (btn.disabled) return;
-        document.querySelectorAll(".numero").forEach(b => b.classList.remove("selecionado"));
-        btn.classList.add("selecionado");
-        numeroSelecionado = i;
-      });
+      btn.onclick = () => {
+        if (btn.classList.contains("reserved")) return;
+        document.querySelectorAll(".grid button").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selecionada = i;
+      };
       grid.appendChild(btn);
     }
 
-    // Reservar dezena
-    document.getElementById("reservar").addEventListener("click", async () => {
-      const nome = document.getElementById("nome").value.trim();
-
-      if (!numeroSelecionado) {
-        alert("Escolha uma dezena primeiro!");
-        return;
-      }
-      if (!nome) {
-        alert("Digite seu nome!");
-        return;
-      }
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ nome: nome, dezena: numeroSelecionado })
-        });
-        const data = await res.json();
-
-        if (data.sucesso) {
-          alert(data.mensagem);
-          carregarReservadas();
-        } else {
-          alert(data.mensagem);
-        }
-      } catch (err) {
-        alert("Erro ao conectar ao servidor: " + err);
-      }
-    });
-
-    // Carregar e bloquear dezenas já reservadas
+    // carregar dezenas já reservadas
     async function carregarReservadas() {
       try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-
-        document.querySelectorAll(".numero").forEach(b => {
-          b.disabled = false;
-          b.classList.remove("ocupado", "selecionado");
+        const resp = await fetch(url + "?acao=listar");
+        const data = await resp.json();
+        const reservadas = data.reservadas || [];
+        document.querySelectorAll(".grid button").forEach(btn => {
+          if (reservadas.includes(btn.textContent)) {
+            btn.classList.add("reserved");
+            btn.disabled = true;
+          }
         });
-
-        if (data.reservadas) {
-          data.reservadas.forEach(d => {
-            const btn = document.querySelector(`.numero[data-numero='${d}']`);
-            if (btn) {
-              btn.disabled = true;
-              btn.classList.add("ocupado");
-            }
-          });
-        }
-      } catch (err) {
-        console.error("Erro ao carregar reservas:", err);
+      } catch (e) {
+        console.log("Erro ao carregar reservas:", e);
       }
     }
 
     carregarReservadas();
+
+    // reservar
+    document.getElementById("reservar").onclick = async () => {
+      const nome = document.getElementById("nome").value.trim();
+      if (!nome || !selecionada) {
+        mostrarMensagem("Preencha o nome e escolha uma dezena!", true);
+        return;
+      }
+
+      try {
+        const resp = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({ nome: nome, dezena: selecionada }),
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await resp.json();
+        if (data.sucesso) {
+          mostrarMensagem(data.mensagem, false);
+          carregarReservadas(); // atualiza grid
+        } else {
+          mostrarMensagem(data.mensagem, true);
+        }
+      } catch (e) {
+        mostrarMensagem("Erro no servidor: " + e, true);
+      }
+    };
+
+    function mostrarMensagem(msg, erro = false) {
+      const box = document.getElementById("mensagem");
+      box.textContent = msg;
+      box.className = "msg " + (erro ? "erro" : "sucesso");
+    }
   </script>
 </body>
 </html>
