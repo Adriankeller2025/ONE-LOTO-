@@ -7,204 +7,159 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #3a0071, #5a189a, #7b2cbf);
-      color: white;
+      background: linear-gradient(135deg, #4b0082, #800080);
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
     }
-
     .container {
       background: #1a001f;
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-      width: 340px;
+      box-shadow: 0 0 30px rgba(255, 255, 0, 0.6);
       text-align: center;
-      animation: fadeIn 1s ease-in-out;
+      width: 320px;
+      animation: pulse 3s infinite;
     }
-
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+      50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+      100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+    }
     h1 {
-      color: #ffd700;
-      font-size: 28px;
+      color: #FFD700;
       margin-bottom: 20px;
-      animation: pulse 2s infinite;
     }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
-
     .number {
-      background: #6a0dad;
-      border: none;
+      background: #800080;
       padding: 15px;
-      font-size: 18px;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
-      color: white;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .number:hover {
-      background: #ff0080;
-      transform: scale(1.1);
-      box-shadow: 0 0 12px #ff0080;
-    }
-
-    .number.selected {
-      background: #ffd700;
-      color: black;
       font-weight: bold;
-      animation: pulse 1.5s infinite;
+      transition: transform 0.2s, background 0.3s;
     }
-
-    .number.reserved {
-      background: #444;
+    .number:hover {
+      transform: scale(1.1);
+      background: #9932CC;
+    }
+    .selected {
+      background: #FFD700 !important;
+      color: #000;
+    }
+    .reserved {
+      background: #444 !important;
+      color: #999;
       cursor: not-allowed;
-      color: #bbb;
-      text-decoration: line-through;
     }
-
     input {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin-bottom: 15px;
       border-radius: 10px;
       border: none;
       font-size: 16px;
     }
-
     button {
-      background: linear-gradient(45deg, #ffd700, #ffae00);
-      border: none;
+      width: 100%;
       padding: 15px;
-      border-radius: 12px;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
+      border: none;
+      border-radius: 10px;
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
+      transition: transform 0.2s;
     }
-
     button:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px #ffd700;
     }
-
-    .message {
+    #mensagem {
       margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
       display: none;
     }
-
-    .success {
-      background: #28a745;
-      color: white;
-    }
-
-    .error {
-      background: #dc3545;
-      color: white;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .erro { background: #ff4d4d; }
+    .sucesso { background: #32cd32; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
-    <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
     <input type="text" id="nome" placeholder="Digite seu nome">
     <button onclick="reservar()">🎟️ Reservar</button>
-    <div id="mensagem" class="message"></div>
+    <div id="mensagem"></div>
   </div>
 
   <script>
-    const apiUrl = "https://script.google.com/macros/s/AKfycbxls9azCNrkWeGt5h1bY49AutvIMXRDZX5r-8jySUBTYqnWcIdSuVzmtOVmdymvU9KrSw/exec";
-    let selectedNumber = null;
+    const API_URL = "https://script.google.com/macros/s/AKfycbz5ocNosSKbKcZEOvPQMea3B453apYmHFX-tP__AGTpbOnZ1uKmcTvwTbbFAV3jbrvWjQ/exec";
+    let selecionado = null;
 
-    // Criar botões de 1 a 25
+    // Cria os botões
     const grid = document.getElementById("grid");
     for (let i = 1; i <= 25; i++) {
-      const btn = document.createElement("button");
+      const btn = document.createElement("div");
       btn.textContent = i;
       btn.classList.add("number");
-      btn.onclick = () => selectNumber(i, btn);
+      btn.onclick = () => selecionar(btn, i);
       grid.appendChild(btn);
     }
 
-    function selectNumber(num, btn) {
-      if (btn.classList.contains("reserved")) return;
+    function selecionar(botao, numero) {
+      if (botao.classList.contains("reserved")) return;
       document.querySelectorAll(".number").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      selectedNumber = num;
+      botao.classList.add("selected");
+      selecionado = numero;
     }
 
-    async function carregarReservadas() {
-      try {
-        const res = await fetch(apiUrl + "?action=getReserved");
-        const reserved = await res.json();
-        document.querySelectorAll(".number").forEach(btn => {
-          if (reserved.includes(btn.textContent)) {
-            btn.classList.add("reserved");
-            btn.disabled = true;
-          }
-        });
-      } catch (err) {
-        console.error("Erro ao carregar reservadas", err);
-      }
+    async function carregarReservados() {
+      const res = await fetch(API_URL);
+      const reservados = await res.json();
+      document.querySelectorAll(".number").forEach(btn => {
+        if (reservados.includes(btn.textContent)) {
+          btn.classList.add("reserved");
+        }
+      });
     }
 
     async function reservar() {
       const nome = document.getElementById("nome").value;
       const msg = document.getElementById("mensagem");
+      msg.style.display = "block";
 
-      if (!nome || !selectedNumber) {
-        msg.textContent = "Preencha o nome e selecione uma dezena!";
-        msg.className = "message error";
-        msg.style.display = "block";
+      if (!nome || !selecionado) {
+        msg.textContent = "Preencha o nome e escolha uma dezena!";
+        msg.className = "erro";
         return;
       }
 
       try {
-        const res = await fetch(apiUrl + "?action=reserve&nome=" + encodeURIComponent(nome) + "&dezena=" + selectedNumber);
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ nome, dezena: selecionado })
+        });
         const data = await res.json();
-        msg.textContent = data.message;
-        msg.className = "message " + (data.success ? "success" : "error");
-        msg.style.display = "block";
+        msg.textContent = data.mensagem;
+        msg.className = data.sucesso ? "sucesso" : "erro";
 
-        if (data.success) {
-          carregarReservadas();
-          document.getElementById("nome").value = "";
-          selectedNumber = null;
-        }
-      } catch (err) {
+        if (data.sucesso) carregarReservados();
+      } catch (e) {
         msg.textContent = "Erro: Falha ao conectar ao servidor.";
-        msg.className = "message error";
-        msg.style.display = "block";
+        msg.className = "erro";
       }
     }
 
-    carregarReservadas();
+    carregarReservados();
   </script>
 </body>
 </html>
