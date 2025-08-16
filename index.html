@@ -2,48 +2,55 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ONE LOTO</title>
   <style>
+    @keyframes pulse {
+      0%   { transform: scale(1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+      50%  { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+      100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+    }
+
     body {
-      background: linear-gradient(135deg, #3a0071, #5d0f82);
-      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      background: linear-gradient(135deg, #4b0082, #800080);
+      font-family: 'Poppins', sans-serif;
+      color: #FFF;
     }
 
     .container {
-      background: #1c001f;
-      padding: 25px;
+      background: #1a001f;
+      padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+      width: 320px;
       text-align: center;
-      width: 300px;
-      color: white;
+      animation: pulse 3s infinite;
     }
 
     h1 {
+      margin: 0;
+      margin-bottom: 20px;
       color: #FFD700;
-      margin-bottom: 15px;
+      font-size: 28px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .number {
+      padding: 15px 0;
       background: #7a0bc0;
-      color: white;
-      border: none;
       border-radius: 10px;
-      padding: 15px;
       font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -53,13 +60,12 @@
       box-shadow: 0 0 15px #FFD700;
     }
 
-    .number.selected {
-      background: #FFD700;
-      color: black;
-      font-weight: bold;
+    .selected {
+      background: #FFD700 !important;
+      color: black !important;
     }
 
-    .number.reserved {
+    .reserved {
       background: #444 !important;
       color: #aaa !important;
       cursor: not-allowed;
@@ -70,22 +76,21 @@
     input {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
       border-radius: 8px;
       border: none;
       font-size: 14px;
+      margin-bottom: 15px;
     }
 
     button#reservar {
+      width: 100%;
+      padding: 15px;
       background: linear-gradient(90deg, #FFD700, #FF8C00);
-      color: black;
-      font-weight: bold;
       border: none;
       border-radius: 10px;
-      padding: 15px;
       font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      width: 100%;
       transition: transform 0.2s, background 0.3s;
     }
 
@@ -104,55 +109,52 @@
 
     .msg.sucesso {
       background: #28a745;
-      color: white;
     }
 
     .msg.erro {
       background: #dc3545;
-      color: white;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
-    <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Seu nome" />
+    <input type="text" id="nome" placeholder="Seu nome completo">
     <button id="reservar">🎟️ Reservar</button>
     <div class="msg" id="msg"></div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbz19Ddo5DQeOK_d4l3GtZgCOcNWBhPHdN-GeQhItQjNmsQ7a2Q1Z19LOw3aKdg8gb6bWg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwG_eSs89S_oAlWwylbZTgBUwpV1aAaOfl8bcArQQNx3k3KkMI7kocFfSY-tvWdyC0HLw/exec";
 
     const grid = document.getElementById("grid");
     const msg = document.getElementById("msg");
     const btnReservar = document.getElementById("reservar");
     let selected = null;
 
-    // Criar botões de 1 a 25
+    // Cria dezena de 1 a 25
     for (let i = 1; i <= 25; i++) {
-      const btn = document.createElement("button");
+      const btn = document.createElement("div");
       btn.textContent = i;
-      btn.classList.add("number");
+      btn.className = "number";
       btn.dataset.num = i;
       btn.addEventListener("click", () => {
         if (btn.classList.contains("reserved")) return;
         document.querySelectorAll(".number").forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
         selected = i;
+        msg.style.display = 'none';
       });
       grid.appendChild(btn);
     }
 
-    // Carregar reservas existentes
+    // Busca de dezenas já reservadas
     async function carregarReservas() {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL + "?action=getReservas");
         const data = await res.json();
-
-        if (data.sucesso) {
+        if (data.reservas) {
           data.reservas.forEach(num => {
             const btn = document.querySelector(`.number[data-num='${num}']`);
             if (btn) {
@@ -168,35 +170,28 @@
 
     carregarReservas();
 
-    // Reservar número
+    // Reservar ação
     btnReservar.addEventListener("click", async () => {
       const nome = document.getElementById("nome").value.trim();
-
       if (!nome || !selected) {
         showMsg("Preencha seu nome e escolha uma dezena!", "erro");
         return;
       }
 
       try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ nome, dezena: selected })
-        });
-
+        const res = await fetch(API_URL + "?action=reservar&nome=" + encodeURIComponent(nome) + "&dezena=" + selected);
         const data = await res.json();
 
-        if (data.sucesso) {
-          showMsg(data.mensagem, "sucesso");
+        showMsg(data.message, data.success ? "sucesso" : "erro");
+
+        if (data.success) {
           const btn = document.querySelector(`.number[data-num='${selected}']`);
           btn.classList.add("reserved");
           btn.disabled = true;
-          btn.classList.remove("selected");
           selected = null;
-        } else {
-          showMsg(data.mensagem, "erro");
         }
       } catch (err) {
-        showMsg("Erro: Falha ao conectar ao servidor.", "erro");
+        showMsg("Erro: falha ao conectar ao servidor.", "erro");
       }
     });
 
@@ -205,6 +200,7 @@
       msg.className = "msg " + type;
       msg.style.display = "block";
     }
+
   </script>
 </body>
 </html>
