@@ -35,6 +35,11 @@
     }
     .num:hover{background:#6a0dad;}
     .num.active{background:#ffd700;color:#000;}
+    .num:disabled{
+      background:#555;
+      color:#999;
+      cursor:not-allowed;
+    }
     input{
       width:100%;padding:.7rem;border:none;
       border-radius:8px;margin-bottom:1rem;
@@ -75,23 +80,47 @@
   </div>
 
   <script>
-    // 🔗 URL do seu Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-jMDDdWVt1e2OH5zBIcV8h4R6Locek19y_zyZc6aig3WNGoZtlvF4BLt2KuAM4z4iiA/exec";
+    // URL do seu Apps Script (publique como web app e cole aqui!)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYBnZARUnmqxAqxBoP6Aslga2RoMo-MZLjZJu95kMJ2TBu7IUB8met5vvOsSkq9gPEQg/exec";
 
-    // Monta os botões 1 a 25
     const grid = document.getElementById("grid");
     let dezenaSelecionada = null;
+
+    // Cria botões de 1 a 25
     for(let i=1;i<=25;i++){
       const btn=document.createElement("button");
       btn.textContent=i;
       btn.className="num";
       btn.onclick=()=>{
+        if(btn.disabled) return; // se já reservada, não deixa clicar
         document.querySelectorAll(".num").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
         dezenaSelecionada=i;
       };
       grid.appendChild(btn);
     }
+
+    // 🔹 Buscar dezenas reservadas e bloquear
+    async function carregarReservas(){
+      try{
+        const resp = await fetch(SCRIPT_URL);
+        const data = await resp.json();
+
+        if(data.sucesso){
+          data.dezenas.forEach(num=>{
+            const btn = [...document.querySelectorAll(".num")]
+              .find(b => b.textContent == num);
+            if(btn){
+              btn.disabled = true;
+            }
+          });
+        }
+      }catch(e){
+        console.error("Erro ao carregar reservas", e);
+      }
+    }
+
+    carregarReservas();
 
     async function reservar(){
       const nome=document.getElementById("nome").value.trim();
@@ -110,6 +139,11 @@
         const data=await resp.json();
         msg.textContent=data.mensagem;
         msg.className="msg "+(data.sucesso?"ok":"erro");
+
+        if(data.sucesso){
+          carregarReservas(); // atualiza bloqueios depois de reservar
+        }
+
       }catch(e){
         msg.textContent="Erro ao conectar ao servidor.";
         msg.className="msg erro";
