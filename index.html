@@ -11,11 +11,11 @@
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #4b0082, #800080);
       display: flex; justify-content: center; align-items: flex-start;
-      min-height: 100vh; padding: 2rem; color: #fff;
+      min-height: 100vh; padding: 1rem; color: #fff;
     }
     .container {
       background: #1a001f;
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 20px;
       max-width: 450px; width: 100%;
       box-shadow: 0 0 25px rgba(0,0,0,.5);
@@ -25,10 +25,15 @@
       from {opacity: 0; transform: scale(.9);}
       to {opacity: 1; transform: scale(1);}
     }
-    h1 { text-align: center; margin-bottom: 1rem; color: #ffd700; font-size: 2rem; }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #ffd700;
+      font-size: 1.8rem;
+    }
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
       gap: .6rem; margin-bottom: 1.2rem;
     }
     .num {
@@ -39,7 +44,7 @@
       background: #4b0082; color: #fff;
       animation: pulse 1.5s infinite;
     }
-    .num:hover { transform: scale(1.1); background: #6a0dad; }
+    .num:hover { transform: scale(1.08); background: #6a0dad; }
     .num.active { background: #ffd700; color: #000; animation: none; }
     .num.reservada {
       background: #ff4d4d !important;
@@ -60,10 +65,10 @@
       width: 100%; padding: 1rem; border: none;
       border-radius: 8px;
       background: linear-gradient(45deg,#ffd700,#ffa500);
-      font-weight: bold; font-size: 1.1rem;
+      font-weight: bold; font-size: 1.05rem;
       cursor: pointer; transition: .3s;
     }
-    button:hover { opacity: .85; }
+    button:hover { opacity: .9; }
     .msg {
       margin-top: 1rem; padding: .8rem;
       border-radius: 8px; text-align: center;
@@ -77,8 +82,14 @@
     }
     .contador {
       margin-bottom: 1rem; text-align: center;
-      font-size: 1.1rem; font-weight: bold;
+      font-size: 1.05rem; font-weight: bold;
       color: #ffd700;
+    }
+    /* Responsividade */
+    @media (max-width: 480px) {
+      .container { padding: 1rem; }
+      .num { padding: .8rem; font-size: .9rem; }
+      button, input { font-size: .95rem; }
     }
   </style>
 </head>
@@ -92,11 +103,11 @@
     <button onclick="reservar()">✅ Reservar Dezena</button>
     <div id="mensagem" class="msg"></div>
     <div class="info">
-      <p>💰𝐕𝐚𝐥𝐨𝐫 𝐩𝐨𝐫 𝐝𝐞𝐳𝐞𝐧𝐚: <b>R$15,00</b></p>
-      <p>🏆 𝙥𝙧𝙚𝙢𝙞𝙤 𝙛𝙞𝙭𝙤: <b>R$263,00</b></p>
-      <p>🎯 𝐓𝐨𝐝𝐨 𝐝𝐢𝐚 𝐭𝐞𝐦 𝟏 𝐠𝐚𝐧𝐡𝐚𝐝𝐨𝐫</p>
-      <p>⚠️ 𝐂𝐚𝐝𝐚 𝐝𝐞𝐳𝐞𝐧𝐚 𝐬𝐨́ 𝐩𝐨𝐝𝐞 𝐬𝐞𝐫 𝐜𝐨𝐦𝐩𝐫𝐚𝐝𝐚 𝐮𝐦𝐚 𝐯𝐞𝐳</p>
-      <p>⏰ 𝐏𝐚𝐠𝐚𝐦𝐞𝐧𝐭𝐨 𝐚𝐭𝐞́ 𝐚𝐬 𝟏𝟕:𝟎𝟎</p>
+      <p>💰 Valor por dezena: <b>R$15,00</b></p>
+      <p>🏆 Prêmio fixo: <b>R$263,00</b></p>
+      <p>🎯 Todo dia tem 1 ganhador</p>
+      <p>⚠️ Cada dezena só pode ser comprada uma vez</p>
+      <p>⏰ Pagamento até às 17:00</p>
     </div>
   </div>
 
