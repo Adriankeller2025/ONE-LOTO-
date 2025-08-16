@@ -2,10 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>ONE LOTO</title>
+  <title>One Loto</title>
   <style>
     body {
-      background-color: #3b0066;
+      background-color: #3d0066;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -14,150 +14,134 @@
       font-family: Arial, sans-serif;
     }
     .container {
-      background: #1a001f;
+      background-color: #1a001f;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 15px;
       text-align: center;
       color: white;
       width: 300px;
     }
-    h1 {
-      color: gold;
-    }
+    h1 { color: gold; margin-bottom: 20px; }
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin: 15px 0;
+      gap: 10px;
+      margin-bottom: 20px;
     }
-    .grid button {
+    .numero {
       background: purple;
       border: none;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 16px;
       color: white;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
       cursor: pointer;
     }
-    .grid button.selected {
-      background: gold;
-      color: black;
-      font-weight: bold;
-    }
-    .grid button.reserved {
-      background: gray;
-      cursor: not-allowed;
-    }
+    .numero.selecionado { background: gold; color: black; }
+    .numero.reservado { background: gray; cursor: not-allowed; }
     input {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      border-radius: 6px;
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
       border: none;
     }
-    button#reservar {
+    button {
+      width: 100%;
+      padding: 10px;
       background: orange;
       border: none;
-      padding: 10px;
       border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .msg {
-      margin-top: 10px;
       font-weight: bold;
+      cursor: pointer;
+    }
+    .mensagem {
+      margin-top: 15px;
       padding: 10px;
       border-radius: 8px;
     }
-    .erro {
-      background: red;
-    }
-    .sucesso {
-      background: green;
-    }
+    .sucesso { background: green; color: white; }
+    .erro { background: red; color: white; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
-    <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Digite seu nome" />
-    <button id="reservar">🔒 Reservar</button>
-    <div id="mensagem" class="msg"></div>
+    <input type="text" id="nome" placeholder="Seu nome">
+    <button onclick="reservar()">Reservar</button>
+    <div id="mensagem"></div>
   </div>
 
   <script>
-    // 🔗 TROQUE ESSA URL PELA DO SEU APP SCRIPT
-    const url = "https://script.google.com/macros/s/AKfycbxmPdVbNhjOc0jJwmxp-bbFlr0oQ0wvbiSApvzmb4KBMdOywD8Hr2Nm9i-GrmpNhNumDg/exec";
+    const url = "https://script.google.com/macros/s/AKfycbxxjkm1E1C92lMkbfM73NELXw8dRWgxIpwHnOtWgOSom7ujIRlmo8j_mrJGXcqvcY7E-w/exec";
 
-    let selecionada = null;
-
-    // cria botões 1-25
+    let numeroSelecionado = null;
     const grid = document.getElementById("grid");
+
+    // cria botoes 1 a 25
     for (let i = 1; i <= 25; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
+      btn.classList.add("numero");
       btn.onclick = () => {
-        if (btn.classList.contains("reserved")) return;
-        document.querySelectorAll(".grid button").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selecionada = i;
+        if (!btn.classList.contains("reservado")) {
+          document.querySelectorAll(".numero").forEach(b => b.classList.remove("selecionado"));
+          btn.classList.add("selecionado");
+          numeroSelecionado = i;
+        }
       };
       grid.appendChild(btn);
     }
 
-    // carregar dezenas já reservadas
-    async function carregarReservadas() {
+    async function carregarReservados() {
       try {
-        const resp = await fetch(url + "?acao=listar");
-        const data = await resp.json();
-        const reservadas = data.reservadas || [];
-        document.querySelectorAll(".grid button").forEach(btn => {
-          if (reservadas.includes(btn.textContent)) {
-            btn.classList.add("reserved");
+        let resp = await fetch(url);
+        let data = await resp.json();
+        let reservados = data.dezenas || [];
+
+        reservados.forEach(d => {
+          let btn = [...document.querySelectorAll(".numero")].find(b => b.textContent === d);
+          if (btn) {
+            btn.classList.add("reservado");
             btn.disabled = true;
           }
         });
       } catch (e) {
-        console.log("Erro ao carregar reservas:", e);
+        console.error("Erro carregando reservados:", e);
       }
     }
 
-    carregarReservadas();
-
-    // reservar
-    document.getElementById("reservar").onclick = async () => {
+    async function reservar() {
       const nome = document.getElementById("nome").value.trim();
-      if (!nome || !selecionada) {
-        mostrarMensagem("Preencha o nome e escolha uma dezena!", true);
+      const msg = document.getElementById("mensagem");
+      msg.innerHTML = "";
+
+      if (!nome || !numeroSelecionado) {
+        msg.innerHTML = "<div class='mensagem erro'>Escolha um número e digite seu nome!</div>";
         return;
       }
 
       try {
-        const resp = await fetch(url, {
+        let resp = await fetch(url, {
           method: "POST",
-          body: JSON.stringify({ nome: nome, dezena: selecionada }),
+          body: JSON.stringify({ nome: nome, dezena: numeroSelecionado }),
           headers: { "Content-Type": "application/json" }
         });
-        const data = await resp.json();
+
+        let data = await resp.json();
         if (data.sucesso) {
-          mostrarMensagem(data.mensagem, false);
-          carregarReservadas(); // atualiza grid
+          msg.innerHTML = "<div class='mensagem sucesso'>" + data.mensagem + "</div>";
+          carregarReservados();
         } else {
-          mostrarMensagem(data.mensagem, true);
+          msg.innerHTML = "<div class='mensagem erro'>" + data.mensagem + "</div>";
         }
       } catch (e) {
-        mostrarMensagem("Erro no servidor: " + e, true);
+        msg.innerHTML = "<div class='mensagem erro'>Erro: " + e + "</div>";
       }
-    };
-
-    function mostrarMensagem(msg, erro = false) {
-      const box = document.getElementById("mensagem");
-      box.textContent = msg;
-      box.className = "msg " + (erro ? "erro" : "sucesso");
     }
+
+    carregarReservados();
   </script>
 </body>
 </html>
