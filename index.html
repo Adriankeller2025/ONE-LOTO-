@@ -55,7 +55,6 @@
     }
     .msg.ok{background:#32cd32;color:#000;display:block;}
     .msg.erro{background:#ff4d4d;color:#fff;display:block;}
-    .info{margin-top:1.5rem;font-size:.9rem;line-height:1.4;}
   </style>
 </head>
 <body>
@@ -66,7 +65,7 @@
     <input type="text" id="nome" placeholder="Digite seu nome" />
     <button onclick="reservar()">✅ Reservar Dezena</button>
     <div id="mensagem" class="msg"></div>
-    <div class="info">
+    <div style="margin-top:1.5rem;font-size:.9rem;line-height:1.4;">
       <p>💰 Valor por dezena: <b>R$15,00</b></p>
       <p>🏆 Prêmio fixo: <b>R$263,00</b></p>
       <p>🎯 Todo dia tem 1 ganhador</p>
@@ -76,48 +75,44 @@
   </div>
 
   <script>
-    // URL do seu Apps Script
+    // 🔗 URL do seu Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEKgC_2qGAZGgwNNQ-NxiMdTHgUOWrJaKMvf4W2RuyS_N96bFzwDrd0H1yMx2caeCoLw/exec";
 
-    // Monta a grade de dezenas
+    // Monta os botões 1 a 25
     const grid = document.getElementById("grid");
     let dezenaSelecionada = null;
-
-    for (let i = 1; i <= 25; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      btn.className = "num";
-      btn.onclick = () => {
-        document.querySelectorAll(".num").forEach(b => b.classList.remove("active"));
+    for(let i=1;i<=25;i++){
+      const btn=document.createElement("button");
+      btn.textContent=i;
+      btn.className="num";
+      btn.onclick=()=>{
+        document.querySelectorAll(".num").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
-        dezenaSelecionada = i;
+        dezenaSelecionada=i;
       };
       grid.appendChild(btn);
     }
 
-    async function reservar() {
-      const nome = document.getElementById("nome").value.trim();
-      const msg = document.getElementById("mensagem");
+    async function reservar(){
+      const nome=document.getElementById("nome").value.trim();
+      const msg=document.getElementById("mensagem");
 
-      if (!nome || !dezenaSelecionada) {
-        msg.textContent = "⚠️ Digite seu nome e escolha uma dezena!";
-        msg.className = "msg erro";
-        return;
+      if(!nome||!dezenaSelecionada){
+        msg.textContent="⚠️ Digite seu nome e escolha uma dezena!";
+        msg.className="msg erro";return;
       }
 
-      try {
-        const resp = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ nome: nome, dezena: dezenaSelecionada }),
-          headers: { "Content-Type": "application/json" }
+      try{
+        const resp=await fetch(SCRIPT_URL,{
+          method:"POST",
+          body:JSON.stringify({nome:nome,dezena:dezenaSelecionada})
         });
-
-        const data = await resp.json();
-        msg.textContent = data.mensagem;
-        msg.className = "msg " + (data.sucesso ? "ok" : "erro");
-      } catch (e) {
-        msg.textContent = "Erro ao conectar ao servidor.";
-        msg.className = "msg erro";
+        const data=await resp.json();
+        msg.textContent=data.mensagem;
+        msg.className="msg "+(data.sucesso?"ok":"erro");
+      }catch(e){
+        msg.textContent="Erro ao conectar ao servidor.";
+        msg.className="msg erro";
       }
     }
   </script>
