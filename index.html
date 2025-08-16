@@ -2,147 +2,209 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>One Loto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONE LOTO</title>
   <style>
     body {
-      background-color: #3d0066;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #3a0071, #5a189a, #7b2cbf);
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      font-family: Arial, sans-serif;
     }
+
     .container {
-      background-color: #1a001f;
-      padding: 20px;
-      border-radius: 15px;
+      background: #1a001f;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+      width: 340px;
       text-align: center;
-      color: white;
-      width: 300px;
+      animation: fadeIn 1s ease-in-out;
     }
-    h1 { color: gold; margin-bottom: 20px; }
+
+    h1 {
+      color: #ffd700;
+      font-size: 28px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
-    .numero {
-      background: purple;
+
+    .number {
+      background: #6a0dad;
       border: none;
-      color: white;
-      font-size: 16px;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 12px;
       cursor: pointer;
+      color: white;
+      transition: all 0.3s ease-in-out;
     }
-    .numero.selecionado { background: gold; color: black; }
-    .numero.reservado { background: gray; cursor: not-allowed; }
+
+    .number:hover {
+      background: #ff0080;
+      transform: scale(1.1);
+      box-shadow: 0 0 12px #ff0080;
+    }
+
+    .number.selected {
+      background: #ffd700;
+      color: black;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+    }
+
+    .number.reserved {
+      background: #444;
+      cursor: not-allowed;
+      color: #bbb;
+      text-decoration: line-through;
+    }
+
     input {
-      width: 90%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-    button {
       width: 100%;
-      padding: 10px;
-      background: orange;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background: linear-gradient(45deg, #ffd700, #ffae00);
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
     }
-    .mensagem {
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ffd700;
+    }
+
+    .message {
       margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
     }
-    .sucesso { background: green; color: white; }
-    .erro { background: red; color: white; }
+
+    .success {
+      background: #28a745;
+      color: white;
+    }
+
+    .error {
+      background: #dc3545;
+      color: white;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>ONE LOTO</h1>
+    <p>Escolha sua dezena:</p>
     <div class="grid" id="grid"></div>
-    <input type="text" id="nome" placeholder="Seu nome">
-    <button onclick="reservar()">Reservar</button>
-    <div id="mensagem"></div>
+    <input type="text" id="nome" placeholder="Digite seu nome">
+    <button onclick="reservar()">🎟️ Reservar</button>
+    <div id="mensagem" class="message"></div>
   </div>
 
   <script>
-    // 🔗 sua URL já configurada
-    const url = "https://script.google.com/macros/s/AKfycbxxjkm1E1C92lMkbfM73NELXw8dRWgxIpwHnOtWgOSom7ujIRlmo8j_mrJGXcqvcY7E-w/exec";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbxls9azCNrkWeGt5h1bY49AutvIMXRDZX5r-8jySUBTYqnWcIdSuVzmtOVmdymvU9KrSw/exec";
+    let selectedNumber = null;
 
-    let numeroSelecionado = null;
+    // Criar botões de 1 a 25
     const grid = document.getElementById("grid");
-
-    // cria botoes 1 a 25
     for (let i = 1; i <= 25; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
-      btn.classList.add("numero");
-      btn.onclick = () => {
-        if (!btn.classList.contains("reservado")) {
-          document.querySelectorAll(".numero").forEach(b => b.classList.remove("selecionado"));
-          btn.classList.add("selecionado");
-          numeroSelecionado = i;
-        }
-      };
+      btn.classList.add("number");
+      btn.onclick = () => selectNumber(i, btn);
       grid.appendChild(btn);
     }
 
-    async function carregarReservados() {
-      try {
-        let resp = await fetch(url);
-        let data = await resp.json();
-        let reservados = data.dezenas || [];
+    function selectNumber(num, btn) {
+      if (btn.classList.contains("reserved")) return;
+      document.querySelectorAll(".number").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedNumber = num;
+    }
 
-        reservados.forEach(d => {
-          let btn = [...document.querySelectorAll(".numero")].find(b => b.textContent === d);
-          if (btn) {
-            btn.classList.add("reservado");
+    async function carregarReservadas() {
+      try {
+        const res = await fetch(apiUrl + "?action=getReserved");
+        const reserved = await res.json();
+        document.querySelectorAll(".number").forEach(btn => {
+          if (reserved.includes(btn.textContent)) {
+            btn.classList.add("reserved");
             btn.disabled = true;
           }
         });
-      } catch (e) {
-        console.error("Erro carregando reservados:", e);
+      } catch (err) {
+        console.error("Erro ao carregar reservadas", err);
       }
     }
 
     async function reservar() {
-      const nome = document.getElementById("nome").value.trim();
+      const nome = document.getElementById("nome").value;
       const msg = document.getElementById("mensagem");
-      msg.innerHTML = "";
 
-      if (!nome || !numeroSelecionado) {
-        msg.innerHTML = "<div class='mensagem erro'>Escolha um número e digite seu nome!</div>";
+      if (!nome || !selectedNumber) {
+        msg.textContent = "Preencha o nome e selecione uma dezena!";
+        msg.className = "message error";
+        msg.style.display = "block";
         return;
       }
 
       try {
-        let resp = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify({ nome: nome, dezena: numeroSelecionado }),
-          headers: { "Content-Type": "application/json" }
-        });
+        const res = await fetch(apiUrl + "?action=reserve&nome=" + encodeURIComponent(nome) + "&dezena=" + selectedNumber);
+        const data = await res.json();
+        msg.textContent = data.message;
+        msg.className = "message " + (data.success ? "success" : "error");
+        msg.style.display = "block";
 
-        let data = await resp.json();
-        if (data.sucesso) {
-          msg.innerHTML = "<div class='mensagem sucesso'>" + data.mensagem + "</div>";
-          carregarReservados();
-        } else {
-          msg.innerHTML = "<div class='mensagem erro'>" + data.mensagem + "</div>";
+        if (data.success) {
+          carregarReservadas();
+          document.getElementById("nome").value = "";
+          selectedNumber = null;
         }
-      } catch (e) {
-        msg.innerHTML = "<div class='mensagem erro'>Erro: " + e + "</div>";
+      } catch (err) {
+        msg.textContent = "Erro: Falha ao conectar ao servidor.";
+        msg.className = "message error";
+        msg.style.display = "block";
       }
     }
 
-    carregarReservados();
+    carregarReservadas();
   </script>
 </body>
 </html>
